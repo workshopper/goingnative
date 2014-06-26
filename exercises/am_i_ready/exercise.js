@@ -1,7 +1,8 @@
-const MIN_GCC_VERSION = '4.4.0' // kind of arbitrary .. modern *enough*
-    , MIN_PYTHON_VERSION = '2.6.x'
-    , MAX_PYTHON_VERSION = '2.7.x'
+const MIN_GCC_VERSION      = '4.4.0' // kind of arbitrary .. modern *enough*
+    , MIN_PYTHON_VERSION   = '2.6.x'
+    , MAX_PYTHON_VERSION   = '2.7.x'
     , MIN_NODE_GYP_VERSION = '0.12.0'
+
 
 const exercise      = require('workshopper-exercise')()
     , child_process = require('child_process')
