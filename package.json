@@ -1,0 +1,21 @@
+{
+  "name": "goingnative",
+  "version": "1.0.0",
+  "description": "A NodeSchool style workshopper for learning how to write native Node.js addons",
+  "main": "goingnative.js",
+  "bin": "./goingnative.js",
+  "preferGlobal": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rvagg/goingnative.git"
+  },
+  "scripts": {},
+  "author": "Rod Vagg <rod@vagg.org> (https://github.com/rvagg)",
+  "license": "MIT",
+  "dependencies": {
+    "colors-tmpl": "~0.1.0",
+    "workshopper": "~1.0.0",
+    "workshopper-boilerplate": "0.0.1",
+    "workshopper-exercise": "~0.2.3"
+  }
+}
