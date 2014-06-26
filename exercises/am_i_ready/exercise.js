@@ -8,6 +8,11 @@ const exercise      = require('workshopper-exercise')()
     , child_process = require('child_process')
     , semver        = require('semver')
     , chalk         = require('chalk')
+    , path          = require('path')
+    , bindings      = require('bindings')
+
+
+const testPackage = path.join(__dirname, '../../packages/test-addon/')
 
 
 exercise.requireSubmission = false // don't need a submission arg
@@ -15,14 +20,14 @@ exercise.addProcessor(processor)
 
 
 function processor (mode, callback) {
-  var checks = [ checkGcc, checkPython, checkNodeGyp ]
+  var checks = [ checkGcc, checkPython, checkNodeGyp, checkBuild ]
     , pass   = true
 
   ;(function checkNext (curr) {
     if (!checks[curr])
       return callback(null, pass)
 
-    checks[curr](function (err, _pass) {
+    checks[curr](pass, function (err, _pass) {
       if (err)
         return callback(err)
 
@@ -35,7 +40,7 @@ function processor (mode, callback) {
 }
 
 
-function checkGcc (callback) {
+function checkGcc (pass, callback) {
   child_process.exec('gcc -v', { env: process.env }, function (err, stdout, stderr) {
     if (err) {
       exercise.emit('fail', '`' + chalk.bold('gcc') + '` not found in $PATH')
@@ -70,7 +75,7 @@ function checkGcc (callback) {
 }
 
 
-function checkPython (callback) {
+function checkPython (pass, callback) {
   child_process.exec('python --version', { env: process.env }, function (err, stdout, stderr) {
     if (err) {
       exercise.emit('fail', '`' + chalk.bold('python') + '` not found in $PATH')
@@ -120,7 +125,7 @@ function checkPython (callback) {
 }
 
 
-function checkNodeGyp (callback) {
+function checkNodeGyp (pass, callback) {
   child_process.exec('node-gyp -v', { env: process.env }, function (err, stdout) {
     if (err) {
       exercise.emit('fail', '`' + chalk.bold('node-gyp') + '` not found in $PATH')
@@ -154,5 +159,53 @@ function checkNodeGyp (callback) {
   })
 }
 
+
+function checkBuild (pass, callback) {
+  if (!pass)
+    return callback()
+
+  child_process.exec('node-gyp rebuild', { cwd: testPackage, env: process.env }, function (err, stdout, stderr) {
+    if (err) {
+      if (stdout)
+        process.stdout.write(stdout)
+      if (stderr)
+        process.stderr.write(stderr)
+      if (!stdout && !stderr)
+        console.error(err.stack)
+      exercise.emit('fail', 'Could not compile test addon')
+      return callback(null, false)
+    }
+
+    process.stdout.write(stdout)
+    // ignore stderr, gyp cruft
+
+    exercise.emit('pass', 'Compiled test package')
+
+    var binding
+
+    try {
+      binding = bindings({ module_root: testPackage, bindings: 'test' })
+    } catch (e) {
+      exercise.emit('fail', 'Could not properly compile test addon, error finding binding: ' + e.message)
+      return callback(null, false)
+    }
+
+    exercise.emit('pass', 'Found compiled test binding file')
+
+    if (!binding) {
+      exercise.emit('fail', 'Could not properly compile test addon, did not load binding')
+      return callback(null, false)
+    }
+
+    if (binding.test !== 'OK') {
+      exercise.emit('fail', 'Could not properly compile test addon, binding did not behave properly')
+      return callback(null, false)
+    }
+
+    exercise.emit('pass', 'Test binding file works as expected')
+
+    callback(null, true)
+  })
+}
 
 module.exports = exercise

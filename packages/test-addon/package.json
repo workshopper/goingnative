@@ -1,0 +1,13 @@
+{
+  "name": "test",
+  "version": "0.0.0",
+  "main": "test.js",
+  "private": true,
+  "dependencies": {
+    "nan": "~1.2.0"
+  },
+  "scripts": {
+    "test": "node test.js"
+  },
+  "gypfile": true
+}
