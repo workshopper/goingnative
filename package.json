@@ -14,7 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "colors-tmpl": "~0.1.0",
-    "workshopper": "~1.0.0",
+    "workshopper": "git+https://github.com/rvagg/workshopper.git#master",
     "workshopper-boilerplate": "0.0.1",
     "workshopper-exercise": "~0.2.3"
   }
