@@ -22,6 +22,7 @@ workshopper({
   , exerciseDir : fpath('./exercises/')
   , appDir      : __dirname
   , helpFile    : fpath('help.txt')
+  , footerFile  : false
   , menu        : {
         fs: 'white'
       , bg: 'black'
