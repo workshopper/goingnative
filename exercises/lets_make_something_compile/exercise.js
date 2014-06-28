@@ -7,7 +7,7 @@ const boilerplate = require('workshopper-boilerplate')
     , mkdirp      = require('mkdirp')
     , yaml        = require('js-yaml')
     , is          = require('core-util-is')
-
+    //, npmlog      = require(require.resolve())
 
 const bindingsDir     = path.dirname(require.resolve('bindings'))
     , copyTempDir     = path.join(process.cwd(), '~test-addon.' + Math.floor(Math.random() * 10000))
@@ -142,6 +142,7 @@ function checkBindingGyp (mode, callback) {
       return fail('binding.gyp does not contain a include_dirs array for the first target (include_dirs: [ ... ])')
 
     var nanConstruct = '<!(node -e "require(\'nan\')")'
+    //TODO: grep the source for this string to make sure it's got `"` style quotes
 
     if (doc.targets[0].include_dirs.filter(function (s) { return s == nanConstruct }).length != 1)
       return fail('binding.gyp does not list NAN properly in the include_dirs array for the first target')
@@ -153,16 +154,29 @@ function checkBindingGyp (mode, callback) {
 
 function checkCompile (mode, callback) {
   // TODO: bork if not passing already
-  var gypInst = gyp()
-  gypInst.parseArgv([ null, null, 'rebuild' ])
+
+  var cwd     = process.cwd()
+    , gypInst = gyp()
+
+  function fail (msg) {
+    exercise.emit('fail', msg)
+    process.chdir(cwd)
+    return callback(null, false)
+  }
+
+  gypInst.parseArgv([ null, null, 'rebuild', '--loglevel', 'silent' ])
   process.chdir(copyTempDir)
-  console.log(gypInst.todo)
   gypInst.commands.clean([], function (err) {
-    console.log(err)
+    if (err)
+      return fail('Run node-gyp clean: ' + err.message)
     gypInst.commands.configure([], function (err) {
-      console.log(err)
+      if (err)
+        return fail('Run node-gyp clean: ' + err.message)
       gypInst.commands.build([], function (err) {
-        console.log(err)
+        if (err)
+          return fail('Run node-gyp build: ' + err.message)
+
+        process.chdir(cwd)
         return callback(null, true)
       })
     })
