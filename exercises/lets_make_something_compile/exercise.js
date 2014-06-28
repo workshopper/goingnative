@@ -1,15 +1,16 @@
 const boilerplate = require('workshopper-boilerplate')
     , path        = require('path')
     , fs          = require('fs')
-    , gyp         = require('node-gyp')
     , rimraf      = require('rimraf')
     , cpr         = require('cpr')
     , mkdirp      = require('mkdirp')
     , yaml        = require('js-yaml')
     , is          = require('core-util-is')
-    //, npmlog      = require(require.resolve())
+    , after       = require('after')
+    , gyp         = require('../../lib/gyp')
 
 const bindingsDir     = path.dirname(require.resolve('bindings'))
+    , nanDir          = path.dirname(require.resolve('nan'))
     , copyTempDir     = path.join(process.cwd(), '~test-addon.' + Math.floor(Math.random() * 10000))
     , boilerplateName = 'myaddon'
 
@@ -37,7 +38,9 @@ exercise.addCleanup(cleanup)
 // so they don't need to `npm install bindings`
 function boilerplateSetup (callback) {
   var target = path.join(process.cwd(), exercise.boilerplateOut[boilerplateName])
-  cpr(bindingsDir, path.join(target, 'node_modules/bindings/'), callback)
+    , done   = after(2, callback)
+  cpr(bindingsDir, path.join(target, 'node_modules/bindings/'), done)
+  cpr(nanDir, path.join(target, 'node_modules/nan/'), done)
 }
 
 
@@ -132,11 +135,15 @@ function checkBindingGyp (mode, callback) {
     if (doc.targets[0].target_name != 'myaddon')
       return fail('binding.gyp does not name the first target "myaddon"')
 
+    exercise.emit('pass', 'binding.gyp includes a "myaddon" target')
+
     if (!is.isArray(doc.targets[0].sources))
       return fail('binding.gyp does not contain a sources array for the first target (sources: [ ... ])')
 
     if (doc.targets[0].sources.filter(function (s) { return s == 'myaddon.cc' }).length != 1)
       return fail('binding.gyp does not list "myaddon.cc" in the sources array for the first target')
+
+    exercise.emit('pass', 'binding.gyp includes "myaddon.cc" as a source file')
 
     if (!is.isArray(doc.targets[0].include_dirs))
       return fail('binding.gyp does not contain a include_dirs array for the first target (include_dirs: [ ... ])')
@@ -147,6 +154,8 @@ function checkBindingGyp (mode, callback) {
     if (doc.targets[0].include_dirs.filter(function (s) { return s == nanConstruct }).length != 1)
       return fail('binding.gyp does not list NAN properly in the include_dirs array for the first target')
 
+    exercise.emit('pass', 'binding.gyp includes a correct NAN include statement')
+
     callback(null, true)
   })
 }
@@ -155,31 +164,13 @@ function checkBindingGyp (mode, callback) {
 function checkCompile (mode, callback) {
   // TODO: bork if not passing already
 
-  var cwd     = process.cwd()
-    , gypInst = gyp()
+  gyp.rebuild(copyTempDir, function (err) {
+    if (err) {
+      exercise.emit('fail', err.message)
+      return callback(null, false)
+    }
 
-  function fail (msg) {
-    exercise.emit('fail', msg)
-    process.chdir(cwd)
-    return callback(null, false)
-  }
-
-  gypInst.parseArgv([ null, null, 'rebuild', '--loglevel', 'silent' ])
-  process.chdir(copyTempDir)
-  gypInst.commands.clean([], function (err) {
-    if (err)
-      return fail('Run node-gyp clean: ' + err.message)
-    gypInst.commands.configure([], function (err) {
-      if (err)
-        return fail('Run node-gyp clean: ' + err.message)
-      gypInst.commands.build([], function (err) {
-        if (err)
-          return fail('Run node-gyp build: ' + err.message)
-
-        process.chdir(cwd)
-        return callback(null, true)
-      })
-    })
+    callback(null, true)
   })
 }
 

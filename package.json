@@ -13,6 +13,7 @@
   "author": "Rod Vagg <rod@vagg.org> (https://github.com/rvagg)",
   "license": "MIT",
   "dependencies": {
+    "after": "~0.8.1",
     "bindings": "~1.2.0",
     "chalk": "~0.4.0",
     "colors-tmpl": "~0.1.0",
