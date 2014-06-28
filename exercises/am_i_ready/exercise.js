@@ -4,8 +4,7 @@ const MIN_GCC_VERSION      = '4.4.0' // kind of arbitrary .. modern *enough*
     , MIN_NODE_GYP_VERSION = '0.12.0'
 
 
-const exercise      = require('workshopper-exercise')()
-    , child_process = require('child_process')
+const child_process = require('child_process')
     , path          = require('path')
     , semver        = require('semver')
     , chalk         = require('chalk')
@@ -16,6 +15,9 @@ const exercise      = require('workshopper-exercise')()
 
 const testPackageSrc = path.join(__dirname, '../../packages/test-addon/')
     , testPackageRnd = path.join(process.cwd(), '~test-addon.' + Math.floor(Math.random() * 10000))
+
+
+var exercise = require('workshopper-exercise')()
 
 
 exercise.requireSubmission = false // don't need a submission arg

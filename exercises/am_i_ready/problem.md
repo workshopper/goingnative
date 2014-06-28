@@ -1,7 +1,12 @@
+----------------------------------------------------------------------
+
+## Task
+
 Prepare your development environment for native Node.js addons
 
 ----------------------------------------------------------------------
-## HINTS
+
+## Description
 
 To pass this exercise you simply need to have a development environment with all the required tools installed.
 

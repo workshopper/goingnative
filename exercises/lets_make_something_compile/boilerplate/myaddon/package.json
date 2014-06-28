@@ -1,0 +1,10 @@
+{
+  "name": "myaddon",
+  "version": "0.0.0",
+  "description": "My Awesome Addon",
+  "main": "index.js",
+  "scripts": {
+    "install": "node-gyp rebuild"
+  },
+  "license": "MIT"
+}
