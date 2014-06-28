@@ -6,17 +6,32 @@ const MIN_GCC_VERSION      = '4.4.0' // kind of arbitrary .. modern *enough*
 
 const exercise      = require('workshopper-exercise')()
     , child_process = require('child_process')
+    , path          = require('path')
     , semver        = require('semver')
     , chalk         = require('chalk')
-    , path          = require('path')
     , bindings      = require('bindings')
+    , cpr           = require('cpr')
+    , rimraf        = require('rimraf')
 
 
-const testPackage = path.join(__dirname, '../../packages/test-addon/')
+const testPackageSrc = path.join(__dirname, '../../packages/test-addon/')
+    , testPackageRnd = path.join(process.cwd(), '~test-addon.' + Math.floor(Math.random() * 10000))
 
 
 exercise.requireSubmission = false // don't need a submission arg
+exercise.addSetup(setup)
 exercise.addProcessor(processor)
+exercise.addCleanup(cleanup)
+
+
+function setup (mode, callback) {
+  cpr(testPackageSrc, testPackageRnd, callback)
+}
+
+
+function cleanup (mode, pass, callback) {
+  rimraf(testPackageRnd, callback)
+}
 
 
 function processor (mode, callback) {
@@ -164,7 +179,7 @@ function checkBuild (pass, callback) {
   if (!pass)
     return callback()
 
-  child_process.exec('node-gyp rebuild', { cwd: testPackage, env: process.env }, function (err, stdout, stderr) {
+  child_process.exec('node-gyp rebuild', { cwd: testPackageRnd, env: process.env }, function (err, stdout, stderr) {
     if (err) {
       if (stdout)
         process.stdout.write(stdout)
@@ -184,7 +199,7 @@ function checkBuild (pass, callback) {
     var binding
 
     try {
-      binding = bindings({ module_root: testPackage, bindings: 'test' })
+      binding = bindings({ module_root: testPackageRnd, bindings: 'test' })
     } catch (e) {
       exercise.emit('fail', 'Could not properly compile test addon, error finding binding: ' + e.message)
       return callback(null, false)
