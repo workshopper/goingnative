@@ -1,36 +1,54 @@
-const boilerplate = require('workshopper-boilerplate')
-    , path        = require('path')
-    , fs          = require('fs')
-    , rimraf      = require('rimraf')
-    , cpr         = require('cpr')
-    , mkdirp      = require('mkdirp')
-    , yaml        = require('js-yaml')
-    , is          = require('core-util-is')
-    , after       = require('after')
-    , gyp         = require('../../lib/gyp')
+const boilerplate  = require('workshopper-boilerplate')
+    , path         = require('path')
+    , fs           = require('fs')
+    , childProcess = require('child_process')
+    , rimraf       = require('rimraf')
+    , mkdirp       = require('mkdirp')
+    , yaml         = require('js-yaml')
+    , is           = require('core-util-is')
+    , after        = require('after')
+    , copy         = require('../../lib/copy')
+    , gyp          = require('../../lib/gyp')
+    , solutions    = require('../../lib/solutions')
 
+
+      // where node_modules/bindings is so it can be copied to make a submission compilable
 const bindingsDir     = path.dirname(require.resolve('bindings'))
+      // where node_modules/nan is so it can be copied to make a submission compilable
     , nanDir          = path.dirname(require.resolve('nan'))
+      // a place to make a full copy to run a test compile
     , copyTempDir     = path.join(process.cwd(), '~test-addon.' + Math.floor(Math.random() * 10000))
+      // a place to make a full copy to replace myaddon.cc with a mock to do a mocked run to test JS
+    , copyFauxTempDir = path.join(process.cwd(), '~test-addon-faux.' + Math.floor(Math.random() * 10000))
+      // name of the module required in binding.gyp
     , boilerplateName = 'myaddon'
+      // what we should get on stdout for this to pass
+    , expected        = 'I am a native addon and I AM ALIVE!'
 
 
 var exercise    = require('workshopper-exercise')()
 
 
+// add solutions file listing from solutions/ directory
+exercise = solutions(exercise)
 // add boilerplate functionality
 exercise = boilerplate(exercise)
 
+// boilerplate directory to copy into CWD to give them a base to start from
 exercise.addBoilerplate(path.join(__dirname, 'boilerplate/' + boilerplateName))
+// need to add the two deps (bindings & nan) into node_modules so they don't *need* to `npm install`
 exercise.addPrepare(boilerplateSetup)
 
+// the steps towards verification
 exercise.addProcessor(checkSubmissionDir)
 exercise.addProcessor(copyTemp)
 exercise.addProcessor(checkPackageJson)
 exercise.addProcessor(checkBindingGyp)
 exercise.addProcessor(checkCompile)
+exercise.addProcessor(checkJs)
 exercise.addProcessor(checkExec)
 
+// always clean up the temp directories
 exercise.addCleanup(cleanup)
 
 
@@ -39,11 +57,13 @@ exercise.addCleanup(cleanup)
 function boilerplateSetup (callback) {
   var target = path.join(process.cwd(), exercise.boilerplateOut[boilerplateName])
     , done   = after(2, callback)
-  cpr(bindingsDir, path.join(target, 'node_modules/bindings/'), done)
-  cpr(nanDir, path.join(target, 'node_modules/nan/'), done)
+
+  copy(bindingsDir, path.join(target, 'node_modules/bindings/'), done)
+  copy(nanDir, path.join(target, 'node_modules/nan/'), done)
 }
 
 
+// simple check to see they are running a verify or run with an actual directory
 function checkSubmissionDir (mode, callback) {
   exercise.submission = this.args[0] // submission first arg obviously
 
@@ -68,16 +88,28 @@ function checkSubmissionDir (mode, callback) {
 }
 
 
+// copy their submission into two tmp directories that we can mess with and test without
+// touching their original
 function copyTemp (mode, callback) {
-  cpr(exercise.submission, copyTempDir, function (err) {
+  var done = after(2, function (err) {
     if (err)
       return callback(err)
 
-    callback(null, true)
+    copy(path.join(__dirname, 'faux', 'myaddon.cc'), copyFauxTempDir, function (err) {
+      if (err)
+        return callback(err)
+
+      callback(null, true)
+    })
   })
+
+  copy(exercise.submission, copyTempDir, done)
+  copy(exercise.submission, copyFauxTempDir, done)
 }
 
 
+// inspect package.json, make sure it's parsable and check that it has
+// "gyp":true
 function checkPackageJson (mode, callback) {
   function fail (msg) {
     exercise.emit('fail', msg)
@@ -105,6 +137,8 @@ function checkPackageJson (mode, callback) {
 }
 
 
+// check binding.gyp to see if it's parsable YAML and contains the
+// basic structure that we need for this to work
 function checkBindingGyp (mode, callback) {
   function fail (msg) {
     exercise.emit('fail', msg)
@@ -161,8 +195,9 @@ function checkBindingGyp (mode, callback) {
 }
 
 
+// run a `node-gyp rebuild` on their unmolested code in our copy
 function checkCompile (mode, callback) {
-  // TODO: bork if not passing already
+  //TODO: bork if not passing already
 
   gyp.rebuild(copyTempDir, function (err) {
     if (err) {
@@ -175,13 +210,75 @@ function checkCompile (mode, callback) {
 }
 
 
-function checkExec (mode, callback) {
-  return callback(null, true)
+// run `node-gyp rebuild` on a mocked version of the addon that prints what we want
+// so we can test that their JS is doing what it is supposed to be doing and there
+// is no cheating! (e.g. console.log(...))
+function checkJs (mode, callback) {
+  //TODO: bork if not passing already
+
+  gyp.rebuild(copyFauxTempDir, function (err) {
+    if (err) {
+      exercise.emit('fail', 'Compile mock C++ to test JavaScript: ' + err.message)
+      return callback(null, false)
+    }
+
+    childProcess.exec(process.execPath + ' ' + require.resolve('../../lib/require-argv2') + ' "' + copyFauxTempDir + '"', function (err, stdout, stderr) {
+      if (err) {
+        process.stderr.write(stderr)
+        process.stdout.write(stdout)
+        return callback(err)
+      }
+
+      var pass = stdout.toString() == 'FAUX\n'
+      if (!pass) {
+        process.stderr.write(stderr)
+        process.stdout.write(stdout)
+      }
+      exercise.emit(pass ? 'pass' : 'fail', 'JavaScript code loads addon and invokes `print()` method')
+
+      callback(null, pass)
+    })
+  })
 }
 
 
+// run a full execution of their code & addon, uses a `require()` in a child process
+// and check the stdout for expected
+function checkExec (mode, callback) {
+  childProcess.exec(process.execPath + ' ' + require.resolve('../../lib/require-argv2') + ' "' + copyTempDir + '"', function (err, stdout, stderr) {
+    if (err) {
+      process.stderr.write(stderr)
+      process.stdout.write(stdout)
+      return callback(err)
+    }
+
+    var pass = stdout.toString() == expected + '\n'
+      , seminl = !pass && stdout.toString() == expected
+      , semicase = !pass && !seminl && new RegExp(expected, 'i').test(stdout.toString())
+
+    if (!seminl && !semicase && !pass) {
+      process.stderr.write(stderr)
+      process.stdout.write(stdout)
+    }
+
+    if (seminl)
+      exercise.emit('fail', 'Addon prints out expected string (missing newline)')
+    if (semicase)
+      exercise.emit('fail', 'Addon prints out expected string (printed with wrong character case)')
+    else
+      exercise.emit(pass ? 'pass' : 'fail', 'Addon prints out expected string')
+
+    callback(null, pass)
+  })
+}
+
+
+// don't leave the tmp dirs
 function cleanup (mode, pass, callback) {
-  rimraf(copyTempDir, callback)
+  var done = after(2, callback)
+
+  rimraf(copyTempDir, done)
+  rimraf(copyFauxTempDir, done)
 }
 
 
