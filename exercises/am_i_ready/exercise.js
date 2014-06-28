@@ -1,4 +1,5 @@
 const MIN_GCC_VERSION      = '4.4.0' // kind of arbitrary .. modern *enough*
+    , MIN_LLVM_VERSION     = '5.0'
     , MIN_PYTHON_VERSION   = '2.6.x'
     , MAX_PYTHON_VERSION   = '2.7.x'
     , MIN_NODE_GYP_VERSION = '0.12.0'
@@ -66,22 +67,38 @@ function checkGcc (pass, callback) {
 
     var versionMatch = stderr.toString().split('\n').filter(Boolean).pop()
           .match(/gcc version (\d+\.\d+\.\d+) /)
-      , versionString = versionMatch && versionMatch[1]
+      , versionString
 
-    if (!versionString) {
-      exercise.emit('fail', 'Unknown `' + chalk.bold('gcc') + '` found in $PATH')
-      return callback(null, false)
+    if (versionMatch) {
+      versionString = versionMatch && versionMatch[1]
+
+      if (!semver.satisfies(versionString, '>=' + MIN_GCC_VERSION)) {
+        exercise.emit('fail',
+              '`'
+            + chalk.bold('gcc')
+            + '` version is too old: '
+            + chalk.bold('v' + versionString)
+            + ', please upgrade to a version >= '
+            + chalk.bold('v' + MIN_GCC_VERSION)
+        )
+      }
+    } else if (versionMatch = stderr.toString().match(/Apple LLVM version (\d+\.\d+) /)) {
+      versionString = versionMatch && versionMatch[1] + '.0'
+
+      if (!semver.satisfies(versionString, '>=' + MIN_LLVM_VERSION)) {
+        exercise.emit('fail',
+              '`'
+            + chalk.bold('gcc/llvm')
+            + '` version is too old: '
+            + chalk.bold('v' + versionString)
+            + ', please upgrade to a version >= '
+            + chalk.bold('v' + MIN_LLVM_VERSION)
+        )
+      }
     }
 
-    if (!semver.satisfies(versionString, '>=' + MIN_GCC_VERSION)) {
-      exercise.emit('fail',
-            '`'
-          + chalk.bold('gcc')
-          + '` version is too old: '
-          + chalk.bold('v' + versionString)
-          + ', please upgrade to a version >= '
-          + chalk.bold('v' + MIN_GCC_VERSION)
-      )
+    if (!versionMatch) {
+      exercise.emit('fail', 'Unknown `' + chalk.bold('gcc') + '` found in $PATH')
       return callback(null, false)
     }
 
