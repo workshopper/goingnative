@@ -26,7 +26,17 @@ I am a native addon and I AM ALIVE!
 
 **Things you need to complete**
 
-1. TODO: explain package.json
+### `package.json`
+
+Take a look at your `package.json`. You will find some work has already been done for you, specifically dependencies have been included. Lets break down what each do, and why they make your life easier.
+
+
+* `nan` - nan provides standardized way to build native modules across different versions of node. From their `README.md`:
+    In a moment we will need to tell `node-gyp` where to find nan.
+
+
+*  `bindings` - bindings is a tool that greatly simplifies requiring native modules into your node apps. From their `README.md`:
+
 
 2. TODO: explain binding.gyp
   - sources needs to have "myaddon.cc"
