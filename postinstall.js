@@ -9,6 +9,7 @@ function updateAmIReady() {
   c = complete(3,function() {
     if( distro != "Debian" &&
         distro != "Ubuntu" &&
+        distro != "Darwin" &&
         distro != "Arch Linux") //Supported distros
         distro = "Other"
     Object.keys(vars[distro]).forEach(function(v) {

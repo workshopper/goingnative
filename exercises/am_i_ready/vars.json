@@ -14,6 +14,11 @@
     "python" : "pacman -S python2",
     "gyp" : "npm install -g node-gyp"
   },
+  "Darwin" : {
+    "gcc" : "TODO",
+    "python" : "TODO",
+    "gyp" : "TODO"
+  },
   "Other" : {
     "gcc" : "Unknown OS",
     "python" : "Unknown OS",
