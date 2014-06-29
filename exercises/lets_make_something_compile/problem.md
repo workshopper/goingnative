@@ -31,7 +31,7 @@ I am a native addon and I AM ALIVE!
 Take a look at your `package.json`. You will find some work has already been done for you, specifically dependencies have been included. Lets break down what each do, and why they make your life easier.
 
 
-* `nan` - nan provides standardized way to build native modules across different versions of node. From their `README.md`:
+* `nan` - nan provides a standardized way to build native modules across different versions of node. From their `README.md`:
     In a moment we will need to tell `node-gyp` where to find nan.
 
 
