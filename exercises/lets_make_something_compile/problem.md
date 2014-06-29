@@ -46,8 +46,6 @@ Your submission will be compiled using `node-gyp rebuild` and executed with `nod
 
 ----------------------------------------------------------------------
 
-----------------------------------------------------------------------
-
  __»__ To print these instructions again, run: `{appname} print`
  __»__ To compile and test your solution, run: `{appname} verify {boilerplate:myaddon}`
  __»__ For help run: `{appname} help`
