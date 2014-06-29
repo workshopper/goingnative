@@ -5,8 +5,11 @@ const boilerplate  = require('workshopper-boilerplate')
     , rimraf       = require('rimraf')
     , after        = require('after')
     , copy         = require('../../lib/copy')
-    , gyp          = require('../../lib/gyp')
+    , compile      = require('../../lib/compile')
     , solutions    = require('../../lib/solutions')
+    , check        = require('../../lib/check')
+    , gyp          = require('../../lib/gyp')
+    , packagejson  = require('../../lib/packagejson')
 
 
       // where node_modules/bindings is so it can be copied to make a submission compilable
@@ -24,7 +27,7 @@ const bindingsDir     = path.dirname(require.resolve('bindings'))
     , solutionFiles   = [ 'myaddon.cc', 'index.js' ]
 
 
-var exercise    = require('workshopper-exercise')()
+var exercise = require('workshopper-exercise')()
 
 
 // add solutions file listing from solutions/ directory
@@ -38,16 +41,17 @@ exercise.addBoilerplate(path.join(__dirname, 'boilerplate/' + boilerplateName))
 exercise.addPrepare(boilerplateSetup)
 
 // the steps towards verification
-exercise.addProcessor(checkSubmissionDir)
-exercise.addProcessor(copyTemp)
-exercise.addProcessor(checkPackageJson)
+exercise.addProcessor(check.checkSubmissionDir)
+exercise.addProcessor(copy.copyTemp([ copyTempDir, copyFauxTempDir ]))
+exercise.addProcessor(copyFauxAddon)
+exercise.addProcessor(packagejson.checkPackageJson)
 exercise.addProcessor(gyp.checkBinding)
-exercise.addProcessor(checkCompile)
+exercise.addProcessor(compile.checkCompile(copyTempDir))
 exercise.addProcessor(checkJs)
 exercise.addProcessor(checkExec)
 
 // always clean up the temp directories
-exercise.addCleanup(cleanup)
+exercise.addCleanup(copy.cleanup([ copyTempDir, copyFauxTempDir ]))
 
 
 // complete the copied boilerplate dir by adding node_modules/bindings/
@@ -61,90 +65,10 @@ function boilerplateSetup (callback) {
 }
 
 
-// simple check to see they are running a verify or run with an actual directory
-function checkSubmissionDir (mode, callback) {
-  exercise.submission = this.args[0] // submission first arg obviously
-
-
-  function failBadPath () {
-    exercise.emit('fail', 'Submitted a readable directory path (please supply a path to your solution)')
-    callback(null, false)
-  }
-
-  if (!exercise.submission)
-    return failBadPath()
-
-  fs.stat(exercise.submission, function (err, stat) {
-    if (err)
-      return failBadPath()
-
-    if (!stat.isDirectory())
-      return failBadPath()
-
-    callback(null, true)
-  })
-}
-
-
-// copy their submission into two tmp directories that we can mess with and test without
-// touching their original
-function copyTemp (mode, callback) {
-  var done = after(2, function (err) {
+function copyFauxAddon (mode, callback) {
+  copy(path.join(__dirname, 'faux', 'myaddon.cc'), copyFauxTempDir, function (err) {
     if (err)
       return callback(err)
-
-    copy(path.join(__dirname, 'faux', 'myaddon.cc'), copyFauxTempDir, function (err) {
-      if (err)
-        return callback(err)
-
-      callback(null, true)
-    })
-  })
-
-  copy(exercise.submission, copyTempDir, done)
-  copy(exercise.submission, copyFauxTempDir, done)
-}
-
-
-// inspect package.json, make sure it's parsable and check that it has
-// "gyp":true
-function checkPackageJson (mode, callback) {
-  function fail (msg) {
-    exercise.emit('fail', msg)
-    return callback(null, false)
-  }
-
-  fs.readFile(path.join(copyTempDir, 'package.json'), 'utf8', function (err, data) {
-    if (err)
-      return fail('Read package.json (' + err.message + ')')
-
-    var doc
-
-    try {
-      doc = JSON.parse(data)
-    } catch (e) {
-      return fail('Parse package.json (' + e.message + ')')
-    }
-
-    var gypfile = doc.gypfile === true
-
-    exercise.emit(gypfile ? 'pass' : 'fail', 'package.json contains `"gypfile": true`')
-
-    callback(null, gypfile)
-  })
-}
-
-
-// run a `node-gyp rebuild` on their unmolested code in our copy
-function checkCompile (mode, callback) {
-  if (!exercise.passed)
-    return callback(null, true) // shortcut if we've already had a failure
-
-  gyp.rebuild(copyTempDir, function (err) {
-    if (err) {
-      exercise.emit('fail', err.message)
-      return callback(null, false)
-    }
 
     callback(null, true)
   })
@@ -155,6 +79,8 @@ function checkCompile (mode, callback) {
 // so we can test that their JS is doing what it is supposed to be doing and there
 // is no cheating! (e.g. console.log(...))
 function checkJs (mode, callback) {
+  var exercise = this
+
   if (!exercise.passed)
     return callback(null, true) // shortcut if we've already had a failure
 
@@ -164,22 +90,25 @@ function checkJs (mode, callback) {
       return callback(null, false)
     }
 
-    childProcess.exec(process.execPath + ' ' + require.resolve('../../lib/require-argv2') + ' "' + copyFauxTempDir + '"', function (err, stdout, stderr) {
-      if (err) {
-        process.stderr.write(stderr)
-        process.stdout.write(stdout)
-        return callback(err)
-      }
+    childProcess.exec(
+        process.execPath + ' ' + require.resolve('../../lib/require-argv2') + ' "' + copyFauxTempDir + '"'
+      , function (err, stdout, stderr) {
+          if (err) {
+            process.stderr.write(stderr)
+            process.stdout.write(stdout)
+            return callback(err)
+          }
 
-      var pass = stdout.toString() == 'FAUX\n'
-      if (!pass) {
-        process.stderr.write(stderr)
-        process.stdout.write(stdout)
-      }
-      exercise.emit(pass ? 'pass' : 'fail', 'JavaScript code loads addon and invokes `print()` method')
+          var pass = stdout.toString() == 'FAUX\n'
+          if (!pass) {
+            process.stderr.write(stderr)
+            process.stdout.write(stdout)
+          }
+          exercise.emit(pass ? 'pass' : 'fail', 'JavaScript code loads addon and invokes `print()` method')
 
-      callback(null, pass)
-    })
+          callback(null, pass)
+        }
+    )
   })
 }
 
@@ -190,40 +119,34 @@ function checkExec (mode, callback) {
   if (!exercise.passed)
     return callback(null, true) // shortcut if we've already had a failure
 
-  childProcess.exec(process.execPath + ' ' + require.resolve('../../lib/require-argv2') + ' "' + copyTempDir + '"', function (err, stdout, stderr) {
-    if (err) {
-      process.stderr.write(stderr)
-      process.stdout.write(stdout)
-      return callback(err)
-    }
+  childProcess.exec(
+      process.execPath + ' ' + require.resolve('../../lib/require-argv2') + ' "' + copyTempDir + '"'
+    , function (err, stdout, stderr) {
+        if (err) {
+          process.stderr.write(stderr)
+          process.stdout.write(stdout)
+          return callback(err)
+        }
 
-    var pass = stdout.toString() == expected + '\n'
-      , seminl = !pass && stdout.toString() == expected
-      , semicase = !pass && !seminl && new RegExp(expected, 'i').test(stdout.toString())
+        var pass = stdout.toString() == expected + '\n'
+          , seminl = !pass && stdout.toString() == expected
+          , semicase = !pass && !seminl && new RegExp(expected, 'i').test(stdout.toString())
 
-    if (!seminl && !semicase && !pass) {
-      process.stderr.write(stderr)
-      process.stdout.write(stdout)
-    }
+        if (!seminl && !semicase && !pass) {
+          process.stderr.write(stderr)
+          process.stdout.write(stdout)
+        }
 
-    if (seminl)
-      exercise.emit('fail', 'Addon prints out expected string (missing newline)')
-    if (semicase)
-      exercise.emit('fail', 'Addon prints out expected string (printed with wrong character case)')
-    else
-      exercise.emit(pass ? 'pass' : 'fail', 'Addon prints out expected string')
+        if (seminl)
+          exercise.emit('fail', 'Addon prints out expected string (missing newline)')
+        if (semicase)
+          exercise.emit('fail', 'Addon prints out expected string (printed with wrong character case)')
+        else
+          exercise.emit(pass ? 'pass' : 'fail', 'Addon prints out expected string')
 
-    callback(null, pass)
-  })
-}
-
-
-// don't leave the tmp dirs
-function cleanup (mode, pass, callback) {
-  var done = after(2, callback)
-
-  rimraf(copyTempDir, done)
-  rimraf(copyFauxTempDir, done)
+        callback(null, pass)
+      }
+  )
 }
 
 
