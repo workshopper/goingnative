@@ -3,9 +3,6 @@ const boilerplate  = require('workshopper-boilerplate')
     , fs           = require('fs')
     , childProcess = require('child_process')
     , rimraf       = require('rimraf')
-    , mkdirp       = require('mkdirp')
-    , yaml         = require('js-yaml')
-    , is           = require('core-util-is')
     , after        = require('after')
     , copy         = require('../../lib/copy')
     , gyp          = require('../../lib/gyp')
@@ -43,7 +40,7 @@ exercise.addPrepare(boilerplateSetup)
 exercise.addProcessor(checkSubmissionDir)
 exercise.addProcessor(copyTemp)
 exercise.addProcessor(checkPackageJson)
-exercise.addProcessor(checkBindingGyp)
+exercise.addProcessor(gyp.checkBinding)
 exercise.addProcessor(checkCompile)
 exercise.addProcessor(checkJs)
 exercise.addProcessor(checkExec)
@@ -133,64 +130,6 @@ function checkPackageJson (mode, callback) {
     exercise.emit(gypfile ? 'pass' : 'fail', 'package.json contains `"gypfile": true`')
 
     callback(null, gypfile)
-  })
-}
-
-
-// check binding.gyp to see if it's parsable YAML and contains the
-// basic structure that we need for this to work
-function checkBindingGyp (mode, callback) {
-  function fail (msg) {
-    exercise.emit('fail', msg)
-    return callback(null, false)
-  }
-
-  fs.readFile(path.join(copyTempDir, 'binding.gyp'), 'utf8', function (err, data) {
-    if (err)
-      return fail('Read binding.gyp (' + err.message + ')')
-
-    var doc
-
-    try {
-      doc = yaml.safeLoad(data)
-    } catch (e) {
-      return fail('Parse binding.gyp (' + e.message + ')')
-    }
-
-    if (!is.isObject(doc))
-      return fail('binding.gyp does not contain a parent object ({ ... })')
-
-    if (!is.isArray(doc.targets))
-      return fail('binding.gyp does not contain a targets array ({ targets: [ ... ] })')
-
-    if (!is.isString(doc.targets[0].target_name))
-      return fail('binding.gyp does not contain a target_name for the first target')
-
-    if (doc.targets[0].target_name != 'myaddon')
-      return fail('binding.gyp does not name the first target "myaddon"')
-
-    exercise.emit('pass', 'binding.gyp includes a "myaddon" target')
-
-    if (!is.isArray(doc.targets[0].sources))
-      return fail('binding.gyp does not contain a sources array for the first target (sources: [ ... ])')
-
-    if (doc.targets[0].sources.filter(function (s) { return s == 'myaddon.cc' }).length != 1)
-      return fail('binding.gyp does not list "myaddon.cc" in the sources array for the first target')
-
-    exercise.emit('pass', 'binding.gyp includes "myaddon.cc" as a source file')
-
-    if (!is.isArray(doc.targets[0].include_dirs))
-      return fail('binding.gyp does not contain a include_dirs array for the first target (include_dirs: [ ... ])')
-
-    var nanConstruct = '<!(node -e "require(\'nan\')")'
-    //TODO: grep the source for this string to make sure it's got `"` style quotes
-
-    if (doc.targets[0].include_dirs.filter(function (s) { return s == nanConstruct }).length != 1)
-      return fail('binding.gyp does not list NAN properly in the include_dirs array for the first target')
-
-    exercise.emit('pass', 'binding.gyp includes a correct NAN include statement')
-
-    callback(null, true)
   })
 }
 

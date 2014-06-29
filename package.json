@@ -30,8 +30,8 @@
     "rimraf": "^2.2.8",
     "semver": "~2.3.1",
     "varstring": "^0.1.0",
-    "workshopper": "git+https://github.com/rvagg/workshopper.git#master",
-    "workshopper-boilerplate": "0.0.1",
-    "workshopper-exercise": "~0.2.3"
+    "workshopper": "~1.1.0",
+    "workshopper-boilerplate": "~1.0.0",
+    "workshopper-exercise": "~1.0.0"
   }
 }
