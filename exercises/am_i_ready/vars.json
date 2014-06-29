@@ -1,0 +1,22 @@
+{
+  "Debian" : {
+    "gcc" : "apt-get install build-essential",
+    "python" : "apt-get install python-all",
+    "gyp" : "npm install -g node-gyp"
+  },
+  "Ubuntu" : {
+    "gcc" : "apt-get install build-essential",
+    "python" : "sudo add-apt-repository ppa:fkrull/deadsnakes\nsudo apt-get update\nsudo apt-get install python2.7",
+    "gyp" : "npm install -g node-gyp"
+  },
+  "Arch Linux" : {
+    "gcc" : "base-devel",
+    "python" : "pacman -S python2",
+    "gyp" : "npm install -g node-gyp"
+  },
+  "Other" : {
+    "gcc" : "Unknown OS",
+    "python" : "Unknown OS",
+    "gyp" : "Unknown OS"
+  }
+}

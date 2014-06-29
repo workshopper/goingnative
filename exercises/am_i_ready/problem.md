@@ -13,8 +13,11 @@ To pass this exercise you simply need to have a development environment with all
 You need:
 
  * A **compiler**: specifically, a (non-ancient) C++ compiler, we will require **gcc**
+  {gcc}
  * **Python**: Version 2.7.x (TODO: why? GYP)
+  {python}
  * **node-gyp**: installed globally with `sudo npm install node-gyp -g` (TODO: explain)
+  {gyp}
 
 TODO: how to install all of these things
 TODO: does this work properly on mac? what special instructions does it need?
