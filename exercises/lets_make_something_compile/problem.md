@@ -38,12 +38,15 @@ Take a look at your `package.json`. You will find some work has already been don
 *  `bindings` - bindings is a tool that greatly simplifies requiring native modules into your node apps. From their `README.md`:
 
 
+
 2. TODO: explain binding.gyp
   - sources needs to have "myaddon.cc"
   - include_dirs MUST have `"<!(node -e \"require('nan')\")"` (exactly)
 
+
 3. TODO: explain index.js (see solution/index.js)
   - needs to use 'bindings'
+
 
 4. TODO: explain addon.cc (see solution/myaddon.cc)
   - missing `Print()` method body
@@ -53,8 +56,6 @@ Take a look at your `package.json`. You will find some work has already been don
 ## Conditions
 
 Your submission will be compiled using `node-gyp rebuild` and executed with `node .`, the standard output must be "I am a native addon and I AM ALIVE!" and this must be printed from the compiled (C++) component of your solution.
-
-----------------------------------------------------------------------
 
 ----------------------------------------------------------------------
 
