@@ -197,7 +197,8 @@ function checkBindingGyp (mode, callback) {
 
 // run a `node-gyp rebuild` on their unmolested code in our copy
 function checkCompile (mode, callback) {
-  //TODO: bork if not passing already
+  if (!exercise.passed)
+    return callback(null, true) // shortcut if we've already had a failure
 
   gyp.rebuild(copyTempDir, function (err) {
     if (err) {
@@ -214,7 +215,8 @@ function checkCompile (mode, callback) {
 // so we can test that their JS is doing what it is supposed to be doing and there
 // is no cheating! (e.g. console.log(...))
 function checkJs (mode, callback) {
-  //TODO: bork if not passing already
+  if (!exercise.passed)
+    return callback(null, true) // shortcut if we've already had a failure
 
   gyp.rebuild(copyFauxTempDir, function (err) {
     if (err) {
@@ -245,6 +247,9 @@ function checkJs (mode, callback) {
 // run a full execution of their code & addon, uses a `require()` in a child process
 // and check the stdout for expected
 function checkExec (mode, callback) {
+  if (!exercise.passed)
+    return callback(null, true) // shortcut if we've already had a failure
+
   childProcess.exec(process.execPath + ' ' + require.resolve('../../lib/require-argv2') + ' "' + copyTempDir + '"', function (err, stdout, stderr) {
     if (err) {
       process.stderr.write(stderr)
