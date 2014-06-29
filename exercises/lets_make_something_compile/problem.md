@@ -28,12 +28,15 @@ I am a native addon and I AM ALIVE!
 
 1. TODO: explain package.json
 
+
 2. TODO: explain binding.gyp
   - sources needs to have "myaddon.cc"
   - include_dirs MUST have `"<!(node -e \"require('nan')\")"` (exactly)
 
+
 3. TODO: explain index.js (see solution/index.js)
   - needs to use 'bindings'
+
 
 4. TODO: explain addon.cc (see solution/myaddon.cc)
   - missing `Print()` method body
