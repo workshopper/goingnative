@@ -14,7 +14,7 @@ const solutionFiles   = [ 'myaddon.cc', 'index.js' ]
       // a place to make a full copy to replace myaddon.cc with a mock to do a mocked run to test JS
     , copyFauxTempDir = path.join(process.cwd(), '~test-addon-faux.' + Math.floor(Math.random() * 10000))
       // what we should get on stdout for this to pass
-    , expected        = 'I am a native addon and I AM ALIVE!'
+    , expected        = 'this is a test, I repeat, this is a test'
 
 
 var exercise = require('workshopper-exercise')()
@@ -37,15 +37,13 @@ exercise.addCleanup(copy.cleanup([ copyTempDir, copyFauxTempDir ]))
 
 
 function copyFauxAddon (mode, callback) {
-  copy(path.join(__dirname, 'faux', 'myaddon.cc'), copyFauxTempDir, function (err) {
+  copy(path.join(__dirname, 'solution', 'myaddon.cc'), copyFauxTempDir, function (err) {
     if (err)
       return callback(err)
 
     callback(null, true)
   })
 }
-
-
 
 
 // run `node-gyp rebuild` on a mocked version of the addon that prints what we want
@@ -64,7 +62,10 @@ function checkJs (mode, callback) {
     }
 
     childProcess.exec(
-        process.execPath + ' ' + require.resolve('../../lib/require-argv2') + ' "' + copyFauxTempDir + '"'
+          process.execPath
+        + ' "'
+        + copyFauxTempDir
+        + '" "FAUX"'
       , function (err, stdout, stderr) {
           if (err) {
             process.stderr.write(stderr)
@@ -77,7 +78,7 @@ function checkJs (mode, callback) {
             process.stderr.write(stderr)
             process.stdout.write(stdout)
           }
-          exercise.emit(pass ? 'pass' : 'fail', 'JavaScript code loads addon and invokes `print()` method')
+          exercise.emit(pass ? 'pass' : 'fail', 'JavaScript code loads addon and invokes `print(str)` method')
 
           callback(null, pass)
         }
@@ -93,7 +94,12 @@ function checkExec (mode, callback) {
     return callback(null, true) // shortcut if we've already had a failure
 
   childProcess.exec(
-      process.execPath + ' ' + require.resolve('../../lib/require-argv2') + ' "' + copyTempDir + '"'
+        process.execPath
+      + ' "'
+      + copyTempDir
+      + '" "'
+      + expected
+      + '"'
     , function (err, stdout, stderr) {
         if (err) {
           process.stderr.write(stderr)
@@ -103,17 +109,14 @@ function checkExec (mode, callback) {
 
         var pass = stdout.toString() == expected + '\n'
           , seminl = !pass && stdout.toString() == expected
-          , semicase = !pass && !seminl && new RegExp(expected, 'i').test(stdout.toString())
 
-        if (!seminl && !semicase && !pass) {
+        if (!seminl && !pass) {
           process.stderr.write(stderr)
           process.stdout.write(stdout)
         }
 
         if (seminl)
           exercise.emit('fail', 'Addon prints out expected string (missing newline)')
-        if (semicase)
-          exercise.emit('fail', 'Addon prints out expected string (printed with wrong character case)')
         else
           exercise.emit(pass ? 'pass' : 'fail', 'Addon prints out expected string')
 
