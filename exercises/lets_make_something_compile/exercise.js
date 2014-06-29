@@ -21,13 +21,14 @@ const bindingsDir     = path.dirname(require.resolve('bindings'))
     , boilerplateName = 'myaddon'
       // what we should get on stdout for this to pass
     , expected        = 'I am a native addon and I AM ALIVE!'
+    , solutionFiles   = [ 'myaddon.cc', 'index.js' ]
 
 
 var exercise    = require('workshopper-exercise')()
 
 
 // add solutions file listing from solutions/ directory
-exercise = solutions(exercise)
+exercise = solutions(exercise, solutionFiles)
 // add boilerplate functionality
 exercise = boilerplate(exercise)
 
