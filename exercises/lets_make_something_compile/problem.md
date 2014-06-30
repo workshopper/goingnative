@@ -26,13 +26,15 @@ I am a native addon and I AM ALIVE!
 
 **Things you need to complete**
 
-1. TODO: explain package.json
+### `bindings.gyp`
 
+`bindings.gyp` is a JSON-esq file that tells `node-gyp` how to build your project. If you open it up, you will see a basic structure has been created for you with some dummy data, but it will require some love from you before you will get it to compile anything. Lets break down what we are looking at.
 
-2. TODO: explain binding.gyp
-  - sources needs to have "myaddon.cc"
-  - include_dirs MUST have `"<!(node -e \"require('nan')\")"` (exactly)
+Every `bindings.gyp` file has an array of targets, which contains the native module(s) `node-gyp` is going to build for you. Each target in the array will have a `"target_name" : {name}`, which will cause `node-gyp` to output your generated module to `{name}.node`. Every target will also have a `sources` array, which is an array of `*.cc` files which `node-gyp` will use to compile your module. Finally, it will have an `include_dirs` array telling `node-gyp` what files you want to be able to `#include` from your `*.cc` files. Files properly included with `include_dirs` can be `#include`.
 
+Currently, the `binding.gyp` file is telling `node-gyp` to compile `derp.cc` and output it to `derp.node`.
+
+Now, with this information fresh in your mind, its time to show your `binding.gyp` file some love! Your mission: We need to tell `node-gyp` what file we are generating and what source files it needs to use to generate it. With `binding.gyp` open, go ahead and tell `node-gyp` to compile `myaddon.cc` and output it to `myaddon.node`. You also need to tell `node-gyp` where nan is! Go ahead and include the following string (exactly as typed) `"<!(node -e \"require('nan')\")"`
 
 3. TODO: explain index.js (see solution/index.js)
   - needs to use 'bindings'
