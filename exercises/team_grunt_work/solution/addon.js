@@ -18,10 +18,10 @@ function runSync () {
 
 function runAsync () {
   // how many batches should we split the work in to?
-	var batches = 4;
-	var ended = 0;
+	var batches = 2;
 	var total = {};
 	var start = Date.now();
+	var ended = 0;
 
 	function done (err, result) {
                 for (var property in result) {
@@ -32,26 +32,25 @@ function runAsync () {
 			}
 		}
 
-    // have all the batches finished executing?
-		if (++ended == batches) {
+                if (++ended == batches) {
 			console.log('Async');
-//			console.log(total);
+	//		console.log(total);
 			console.log('took ' + (Date.now() - start) + ' ms');
-                        for (var property in total) {
+			for (var property in total) {
 				if (total.hasOwnProperty(property) && syncres[property] != total[property]) {
+					console.log('error');
+				}
+			}
+			for (var property in syncres) {
+				if (syncres.hasOwnProperty(property) && syncres[property] != total[property]) {
 					console.log('error');
 				}
 			}
 		}
 	}
 
-  // for each batch of work, request an async count for
-  // a portion of the words
-        var step = corpus.length / batches;
-	for (var i = 0; i < batches; i++) {
-		addon.countAsync(corpus.slice(step * i, step * (i + 1)), done);
-	}
+	addon.countAsync(corpus, batches, done);
 }
 
-runSync()
-runAsync()
+runSync();
+runAsync();

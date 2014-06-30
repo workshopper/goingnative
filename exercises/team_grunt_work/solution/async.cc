@@ -8,6 +8,7 @@
 
 #include <nan.h>
 #include <map>
+#include <vector>
 #include <string>
 #include "./async.h"
 
@@ -23,22 +24,25 @@ using v8::Value;
 typedef std::map<std::string, uint32_t> WordMap;
 typedef std::pair<const std::string, uint32_t> WordCount;
 
-
 class CountWorker : public NanAsyncWorker {
  public:
-  CountWorker(NanCallback *callback, std::string* words, uint32_t length)
-    : NanAsyncWorker(callback), words(words), length(length) {}
-  ~CountWorker() {
-    delete[] words;
+  CountWorker(NanCallback *callback, Local<Array> arr, uint32_t start, uint32_t stop)
+    : NanAsyncWorker(callback), words(arr->Length()), start(start), stop(stop) {
+    for (uint32_t i = start; i < stop; i++) {
+      String::Utf8Value val(arr->Get(i));
+      words[i - start] = std::string(*val, val.length());
+    }
   }
+
+  ~CountWorker() { }
 
   // Executed inside the worker-thread.
   // It is not safe to access V8, or V8 data structures
   // here, so everything we need for input and output
   // should go on `this`.
   void Execute () {
-    for (uint32_t i = 0; i < length; i++) {
-      word_map[words[i]]++;
+    for (uint32_t i = start; i < stop; i++) {
+      word_map[words[i - start]]++;
     }
   }
 
@@ -64,8 +68,9 @@ class CountWorker : public NanAsyncWorker {
 
  private:
   WordMap word_map;
-  std::string *words;
-  uint32_t length;
+  std::vector<std::string> words;
+  uint32_t start;
+  uint32_t stop;
 };
 
 NAN_METHOD(CountAsync) {
@@ -74,16 +79,14 @@ NAN_METHOD(CountAsync) {
   // expect an array as the first argument
   Local<Array> arr = args[0].As<Array>();
   uint32_t len = arr->Length();
+  uint32_t batches = args[1]->Uint32Value();
+  uint32_t step = len / batches;
 
-  std::string *strings = new std::string[len];
-
-  for (uint32_t i = 0; i < len; i++) {
-    String::Utf8Value word(arr->Get(i));
-    strings[i] = std::string(*word, word.length());
+  for (uint32_t i = 0; i < batches - 1; i++) {
+    NanAsyncQueueWorker(new CountWorker(new NanCallback(args[2].As<Function>()), arr, i * step, (i + 1) * step));
   }
 
-  NanCallback *callback = new NanCallback(args[1].As<Function>());
+  NanAsyncQueueWorker(new CountWorker(new NanCallback(args[2].As<Function>()), arr, (batches - 1) * step, len));
 
-  NanAsyncQueueWorker(new CountWorker(callback, strings, len));
   NanReturnUndefined();
 }
