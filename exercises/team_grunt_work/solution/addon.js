@@ -1,7 +1,7 @@
 var addon = require('./build/Release/addon'),
     fs = require('fs');
 
-var corpus = fs.readFileSync('./corpus.txt', 'utf8').replace(/[^A-Za-z0-9_ ]/g, '').toLowerCase().match(/[^ ]+/g);
+var corpus = fs.readFileSync('./alice29.txt', 'utf8').replace(/[^A-Za-z0-9_ ]/g, '').toLowerCase().match(/[^ ]+/g);
 
 var syncres;
 
@@ -10,9 +10,10 @@ function runSync () {
   // Estimate() will execute in the current thread,
   // the next line won't return until it is finished
 	var result = addon.countSync(corpus);
+  var duration = Date.now() - start;
   console.log('Sync');
 //  console.log(result);
-  console.log('took ' + (Date.now() - start) + ' ms');
+  console.log('took ' + duration + ' ms');
   syncres = result;
 }
 
@@ -33,9 +34,10 @@ function runAsync () {
 		}
 
                 if (++ended == batches) {
+                        var duration = Date.now() - start;
 			console.log('Async');
 	//		console.log(total);
-			console.log('took ' + (Date.now() - start) + ' ms');
+			console.log('took ' + duration + ' ms');
 			for (var property in total) {
 				if (total.hasOwnProperty(property) && syncres[property] != total[property]) {
 					console.log('error');
@@ -46,6 +48,7 @@ function runAsync () {
 					console.log('error');
 				}
 			}
+
 		}
 	}
 
