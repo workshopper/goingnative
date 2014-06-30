@@ -54,7 +54,7 @@ Now, with this information fresh in your mind, its time to show your `binding.gy
 
 ### `index.js`
 
-Congratulations on compiling your first native module! Now lets load it into node to call it and verify its correctness. In order to load the module, we are going to use the `bindings` module. Although it is now standardized, throughout node history, compiled modules were placed in many places. `bindings` checks *all* possible locations that your compiled modules could be located, and imports the first one found. `bindings` exports a single module, which accepts the name of your module as a parameter. This name *must* match `target_name` in `binding.gyp`. After `bindings` loads in your module, you can simply call the function we created and _presto_ you are running your first compiled module.
+Congratulations on compiling your first native module! Now lets load it into node to call it and verify its correctness. In order to load the module, we are going to use the `bindings` module. Although it is now standardized, throughout node history, compiled modules were placed in many places. `bindings` checks *all* possible locations that your compiled modules could be located, and imports the first one found. `bindings` exports a single function, which accepts the name of your module as a parameter. This name *must* match `target_name` in `binding.gyp`. After `bindings` loads in your module, you can simply call the function we created and _presto_ you are running your first compiled module.
 To reiterate, your mission is to use `bindings` to load in your compiled module and call the function we created in the previous step.
 
 ### Finally
