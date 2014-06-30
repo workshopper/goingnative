@@ -37,6 +37,7 @@ Take a look at your `package.json`. You will find some work has already been don
 
 *  `bindings` - bindings is a tool that greatly simplifies requiring native modules into your node apps. From their `README.md`:
 
+There is only one thing you need to do in this file, your mission: simply add `"gypfile": true` to your `package.json`
 
 
 2. TODO: explain binding.gyp
