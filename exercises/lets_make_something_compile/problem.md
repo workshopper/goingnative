@@ -47,14 +47,19 @@ Currently, the `binding.gyp` file is telling `node-gyp` to compile `derp.cc` and
 
 Now, with this information fresh in your mind, its time to show your `binding.gyp` file some love! Your mission: We need to tell `node-gyp` what file we are generating and what source files it needs to use to generate it. With `binding.gyp` open, go ahead and tell `node-gyp` to compile `myaddon.cc` and output it to `myaddon.node`. You also need to tell `node-gyp` where nan is! Go ahead and include the following string (exactly as typed) `"<!(node -e \"require('nan')\")"`
 
-3. TODO: explain index.js (see solution/index.js)
-  - needs to use 'bindings'
-
-
-4. TODO: explain addon.cc (see solution/myaddon.cc)
+3. TODO: explain addon.cc (see solution/myaddon.cc)
   - missing `Print()` method body
   - missing NODE_MODULE(myaddon, Init)
 
+
+### `index.js`
+
+Congratulations on compiling your first native module! Now lets load it into node to call it and verify its correctness. In order to load the module, we are going to use the `bindings` module. Although it is now standardized, throughout node history, compiled modules were placed in many places. `bindings` checks *all* possible locations that your compiled modules could be located, and imports the first one found. `bindings` exports a single function, which accepts the name of your module as a parameter. This name *must* match `target_name` in `binding.gyp`. After `bindings` loads in your module, you can simply call the function we created and _presto_ you are running your first compiled module.
+To reiterate, your mission is to use `bindings` to load in your compiled module and call the function we created in the previous step.
+
+### Finally
+
+To ensure your solution is correct, run: `{appname} verify {boilerplate:myaddon}`
 
 ## Conditions
 

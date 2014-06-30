@@ -1,1 +1,4 @@
-require('bindings')('myaddon').print()
+var bindings = require('bindings')
+var myaddon = bindings('myaddon')
+
+myaddon.print()
