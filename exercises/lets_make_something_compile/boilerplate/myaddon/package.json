@@ -1,6 +1,6 @@
 {
   "name": "myaddon",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "My Awesome Addon",
   "main": "index.js",
   "scripts": {
