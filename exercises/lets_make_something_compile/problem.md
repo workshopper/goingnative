@@ -47,14 +47,51 @@ Currently, the `binding.gyp` file is telling `node-gyp` to compile `derp.cc` and
 
 Now, with this information fresh in your mind, its time to show your `binding.gyp` file some love! Your mission: We need to tell `node-gyp` what file we are generating and what source files it needs to use to generate it. With `binding.gyp` open, go ahead and tell `node-gyp` to compile `myaddon.cc` and output it to `myaddon.node`. You also need to tell `node-gyp` where nan is! Go ahead and include the following string (exactly as typed) `"<!(node -e \"require('nan')\")"`
 
-3. TODO: explain index.js (see solution/index.js)
-  - needs to use 'bindings'
+### `addon.cc`
 
+Now, with `bindings.gyp` and `package.json` fresh in hand, we are ready to get down to the fun stuff. Lets write C++! If you look in `{boilerplate:myaddon}/myaddon.cc` you can see we have created a structure for you to start from. Lets break down whats going on here.
 
-4. TODO: explain addon.cc (see solution/myaddon.cc)
-  - missing `Print()` method body
-  - missing NODE_MODULE(myaddon, Init)
+```cpp
+#include <nan.h>
+```
 
+An include is a macro that tells the precompiler to "replace" `#include`  with the contents of `nan.h`. This has many parellels to `require` but this is *far* from the same thing.
+
+```cpp
+using namespace v8;
+```
+
+`using namespace` is a solution to name conflicts from `#include`d files. It tells gcc which scope to look in to find referenced variables and functions that are not declared in the local scope. Here, we are telling gcc that it should search the `v8` scope, which is equivalent to prefixing all functions and variables from the `v8` scope with `v8::`.
+
+```cpp
+NAN_METHOD(Print) {
+
+}
+```
+
+`nan.h` includes quite a few macros to make your life as a developer easier. These macros wrap the chaos that is the ever changing `v8.h`/`node.h` specification, and exposes them up via a standard api. This means you can make the same function calls against `nan.h` no matter what version of node is running on your machine.
+
+`NAN_METHOD` should be used to define *all* of your v8 accessible methods. In this case, we are defining a v8 accessible method that we will export later called Print. _You will need to update this function to output "I am a native addon and I AM ALIVE!"_. *hint:* if you don't know how to print text to stdout, take a look at `cout` or `printf`.
+
+```cpp
+void Init(Handle<Object> exports) {
+  exports->Set(NanNew("print"),NanNew<FunctionTemplate>(Print)->GetFunction());
+}
+```
+
+Calm down. I know, up until this point everything has been fine and dandy, then we throw this monstrocity your way. Its not as bad as it looks. Lets break it down step by step.
+
+* `void Init(Handle<Object> exports) {` we are defining a function that receives an `exports` object. This object can be thought of in the same way as `module.exports` in node.
+* `NanNew` creates a new property, which we will be tagging onto `module.exports`. In this case it is `print`.
+* `NanNew<FunctionTemplate>(Print)->GetFunction()` is definining a new function object that corresponds to our `NAN_METHOD(Print)` declared above. This is what will be called when we call `myaddon.print()` from our `index.js` file later on.
+* `exports->Set` should be pretty verbose now that you know what is going on with the two parameters.
+
+This entire line is equivalent to `module.exports.print = Print` in node. Don't you love C++? We have wrapped this line in a function. We now need to tell v8 where to find our `exports` statement defined above. This you need to add. `nan.h` has a module defined: `NODE_MODULE`, which accepts to parameters. The first is the *name* of the module. This must be *exactly* the same as the name listed in your `binding.gyp` file. This parameter is *not* a string. The second parameter is the name of the function which handles the `exports` statements. For example if you wanted to the name to be `nyan` which called `void Cat(...){...}` you would type `NODE_MODULE(nyan,Cat)`. Go ahead and name the module the same as in `bindings.gyp` and have it call our `Init` function. This should be the last line of your code.
+
+To reiterate, your mission is:
+
+* Make `Print` print "I am a native addon and I AM ALIVE!".
+* Have `NODE_MODULE` export your addon and call your `Init` function.
 
 ## Conditions
 
