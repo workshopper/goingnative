@@ -10,7 +10,7 @@
     "url": "https://github.com/rvagg/goingnative.git"
   },
   "scripts": {
-    "postinstall" : "node postinstall.js"
+    "postinstall": "node postinstall.js"
   },
   "author": "Rod Vagg <rod@vagg.org> (https://github.com/rvagg)",
   "license": "MIT",
@@ -20,7 +20,7 @@
     "chalk": "~0.4.0",
     "colors-tmpl": "~0.1.0",
     "core-util-is": "^1.0.1",
-    "cpr": "^0.2.0",
+    "cpr": "^0.3.0",
     "getos": "^0.2.1",
     "js-yaml": "^3.0.2",
     "map-async": "~0.1.1",

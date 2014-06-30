@@ -139,7 +139,7 @@ function checkExec (mode, callback) {
 
         if (seminl)
           exercise.emit('fail', 'Addon prints out expected string (missing newline)')
-        if (semicase)
+        else if (semicase)
           exercise.emit('fail', 'Addon prints out expected string (printed with wrong character case)')
         else
           exercise.emit(pass ? 'pass' : 'fail', 'Addon prints out expected string')
