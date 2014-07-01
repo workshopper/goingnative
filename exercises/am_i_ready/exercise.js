@@ -1,8 +1,10 @@
-const MIN_GCC_VERSION      = '4.4.0' // kind of arbitrary .. modern *enough*
-    , MIN_LLVM_VERSION     = '5.0'
-    , MIN_PYTHON_VERSION   = '2.6.x'
-    , MAX_PYTHON_VERSION   = '2.7.x'
-    , MIN_NODE_GYP_VERSION = '0.12.0'
+var versions = require("./vars.json")["Versions"]
+
+const MIN_GCC_VERSION      = versions.gcc
+    , MIN_LLVM_VERSION     = versions.llvm
+    , MIN_PYTHON_VERSION   = versions.python[0]
+    , MAX_PYTHON_VERSION   = versions.python[1]
+    , MIN_NODE_GYP_VERSION = versions.gyp
 
 
 const child_process = require('child_process')

@@ -42,7 +42,7 @@ const varstring = require('varstring')
     if(e)
       return console.error(e.stack)
 
-    vars = JSON.parse(data)
+    vars = JSON.parse(data)["Instructions"]
 
     c()
   })
