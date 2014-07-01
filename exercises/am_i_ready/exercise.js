@@ -1,4 +1,4 @@
-var versions = require("./vars.json")["Versions"]
+var versions = require("./vars.json").Versions
 
 const MIN_GCC_VERSION      = versions.gcc
     , MIN_LLVM_VERSION     = versions.llvm
