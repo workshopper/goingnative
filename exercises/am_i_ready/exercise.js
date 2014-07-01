@@ -1,9 +1,9 @@
-var versions = require("./vars.json")["Versions"]
+var versions = require("./vars.json").Versions
 
 const MIN_GCC_VERSION      = versions.gcc
     , MIN_LLVM_VERSION     = versions.llvm
-    , MIN_PYTHON_VERSION   = versions.python[0]
-    , MAX_PYTHON_VERSION   = versions.python[1]
+    , MIN_PYTHON_VERSION   = versions.python.min
+    , MAX_PYTHON_VERSION   = versions.python.max
     , MIN_NODE_GYP_VERSION = versions.gyp
 
 

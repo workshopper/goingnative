@@ -2,7 +2,10 @@
   "Versions" : {
     "gcc" : "4.4.0",
     "llvm" : "5.0",
-    "python" : ["2.6.x","2.7.x"],
+    "python" : {
+      "min" : "2.6.x",
+      "max" : "2.7.x"
+    },
     "gyp" : "0.12.0"
   },
   "Instructions" : {
