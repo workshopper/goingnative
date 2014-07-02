@@ -20,12 +20,6 @@ var done = after(3, function (err) {
       distro = 'Other'
   }
 
-  Object.keys(vars[distro]).forEach(function(v) {
-    vars[distro][v] = '```bash\n  '
-                    + vars[distro][v]
-                    + '\n  ```'
-  })
-
   var markdown = varstring(problem, vars[distro])
 
   fs.writeFileSync('exercises/am_i_ready/problem.md', markdown, 'utf8')

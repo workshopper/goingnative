@@ -1,7 +1,11 @@
 {
   "Versions" : {
+    "node": {
+      "min": "0.10.14",
+      "max": "0.10.x"
+    },
     "gcc" : "4.4.0",
-    "llvm" : "5.0",
+    "llvm" : "4.2",
     "python" : {
       "min" : "2.6.x",
       "max" : "2.7.x"
@@ -10,29 +14,24 @@
   },
   "Instructions" : {
     "Debian" : {
-      "gcc" : "apt-get install build-essential",
-      "python" : "apt-get install python-all",
-      "gyp" : "sudo npm install -g node-gyp"
+      "gcc" : "Install with `sudo apt-get install build-essential`",
+      "python" : "Install with `sudo apt-get install python-all`"
     },
     "Ubuntu" : {
       "gcc" : "apt-get install build-essential",
-      "python" : "sudo add-apt-repository ppa:fkrull/deadsnakes\nsudo apt-get update\nsudo apt-get install python2.7",
-      "gyp" : "sudo npm install -g node-gyp"
+      "python" : "Install with `sudo apt-get install python2.7`"
     },
     "Arch Linux" : {
-      "gcc" : "base-devel",
-      "python" : "pacman -S python2",
-      "gyp" : "sudo npm install -g node-gyp"
+      "gcc" : "Install with `sudo pacman -S base-devel`",
+      "python" : "Install with `sudo pacman -S python2`"
     },
     "Darwin" : {
-      "gcc" : "TODO",
-      "python" : "TODO",
-      "gyp" : "TODO"
+      "gcc" : "Visit <https://developer.apple.com/xcode/downloads/>",
+      "python" : "Visit <https://www.python.org/download/mac>"
     },
     "Other" : {
-      "gcc" : "Unknown OS",
-      "python" : "Unknown OS",
-      "gyp" : "Unknown OS"
+      "gcc" : "Use your native package manager to install build tools including gcc",
+      "python" : "Download from <https://www.python.org/download/releases/2.7.7> or use your package manager"
     }
   }
 }

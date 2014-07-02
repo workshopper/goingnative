@@ -1,10 +1,11 @@
-var versions = require("./vars.json").Versions
-
-const MIN_GCC_VERSION      = versions.gcc
+const versions             = require('./vars.json').Versions
+    , MIN_GCC_VERSION      = versions.gcc
     , MIN_LLVM_VERSION     = versions.llvm
     , MIN_PYTHON_VERSION   = versions.python.min
     , MAX_PYTHON_VERSION   = versions.python.max
     , MIN_NODE_GYP_VERSION = versions.gyp
+    , MIN_NODE_VERSION     = versions.node.min
+    , MAX_NODE_VERSION     = versions.node.max
 
 
 const child_process = require('child_process')
@@ -40,7 +41,7 @@ function cleanup (mode, pass, callback) {
 
 
 function processor (mode, callback) {
-  var checks = [ checkGcc, checkPython, checkNodeGyp, checkBuild ]
+  var checks = [ checkNode, checkGcc, checkPython, checkNodeGyp, checkBuild ]
     , pass   = true
 
   ;(function checkNext (curr) {
@@ -59,6 +60,38 @@ function processor (mode, callback) {
   })(0)
 }
 
+
+function checkNode (pass, callback) {
+  if (!semver.satisfies(process.versions.node, '>=' + MIN_NODE_VERSION)) {
+    exercise.emit('fail',
+          '`'
+        + chalk.bold('node')
+        + '` version is too old: '
+        + chalk.bold('v' + process.versions.node)
+        + ', please upgrade to a version >= '
+        + chalk.bold('v' + MIN_NODE_VERSION)
+        + ' and <= '
+        + chalk.bold('v' + MAX_NODE_VERSION)
+    )
+    return callback(null, false)
+ }
+
+ if (!semver.satisfies(process.versions.node, '~' + MIN_NODE_VERSION)) {
+    exercise.emit('fail',
+          '`'
+        + chalk.bold('node')
+        + '` version is too new, you are likely using an unstable version: '
+        + chalk.bold('v' + process.versions.node)
+        + ', please upgrade to a version >= '
+        + chalk.bold('v' + MIN_NODE_VERSION)
+        + ' and <= '
+        + chalk.bold('v' + MAX_NODE_VERSION)
+    )
+    return callback(null, false)
+  }
+
+  callback(null, true)
+}
 
 function checkGcc (pass, callback) {
   child_process.exec('gcc -v', { env: process.env }, function (err, stdout, stderr) {

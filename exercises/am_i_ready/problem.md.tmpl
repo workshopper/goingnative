@@ -2,7 +2,7 @@
 
 ## Task
 
-Prepare your development environment for native Node.js addons
+Prepare your development environment for native Node.js add-ons
 
 ----------------------------------------------------------------------
 
@@ -12,15 +12,15 @@ To pass this exercise you simply need to have a development environment with all
 
 You need:
 
- * A **compiler**: specifically, a (non-ancient) C++ compiler, we will require **gcc**
-  {gcc}
- * **Python**: Version 2.7.x (TODO: why? GYP)
-  {python}
- * **node-gyp**: installed globally with `sudo npm install node-gyp -g` (TODO: explain)
-  {gyp}
+A recent and **stable version of Node.js**: unstable releases are not tested with this workshop and should be avoided. Visit http://nodejs.org/ to download a new version or use your local package manager to upgrade.
 
-TODO: how to install all of these things
-TODO: does this work properly on mac? what special instructions does it need?
+A **compiler**: specifically, a (non-ancient) C++ compiler, we will require **gcc** or LLVM gcc on OS X. {gcc}
+
+**Python**: version 2.7.x is preferred for use by GYP, a build generation tool used for configuring and compiling Node.js add-ons. {python}
+
+**node-gyp**: a recent version installed globally with `sudo npm install node-gyp -g`. node-gyp wraps GYP and produces builds specifically targeted for Node.js. Install with `sudo npm install -g node-gyp`.
+
+If you are unsure, simply run `{appname} verify` and we'll tell you what versions you have.
 
 ----------------------------------------------------------------------
 
