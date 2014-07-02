@@ -11,6 +11,9 @@ NAN_METHOD(Delay) {
   int delay = args[0].As<Number>()->IntegerValue();
   Local<Function> callback = args[1].As<Function>();
 
+  printf("FAUX %d\n", delay);
+  fflush(stdout);
+
   #ifdef _WIN32
    Sleep(delay);
   #else
