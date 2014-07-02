@@ -4,6 +4,7 @@ const workshopper = require('workshopper')
     , path        = require('path')
     , credits     = require('./credits')
     , menu        = require('./exercises/menu')
+    , hooray      = require('workshopper-hooray')
 
     , name        = 'goingnative'
     , title       = 'Going Native'
@@ -31,4 +32,5 @@ workshopper({
         name    : 'credits'
       , handler : credits
     } ]
+  , onComplete  : hooray
 })
