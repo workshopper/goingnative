@@ -16,6 +16,13 @@ class MyWorker : public NanAsyncWorker {
   // here, so everything we need for input and output
   // should go on `this`.
   void Execute () {
+    // tiny sleep prior to ensure proper print order of 2 & 3
+    #ifdef _WIN32
+     Sleep(10);
+    #else
+     usleep(10000);
+    #endif
+
     printf("FAUX 3\n");
     fflush(stdout);
 
