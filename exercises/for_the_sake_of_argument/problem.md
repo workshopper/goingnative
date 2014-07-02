@@ -31,6 +31,8 @@ To recap, your mission:
 * Grab the first argument as a string from inside `Print` and convert it to a utf-8 char array.
 * Insert it into a format string using printf.
 
+TODO: simplify
+
 ## Conditions
 
 Your submission will be compiled using `node-gyp rebuild` and executed with `node . "some string"`. Standard output will be checked that string and your code will be checked to ensure that the C++ code is performing the print.

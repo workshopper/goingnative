@@ -49,12 +49,13 @@ Things you need to do:
 
 4. Put your `usleep()` / `Sleep()` logic into the `MyWorker`s `Execute()` method.
 
+TODO: simplify
 
 ----------------------------------------------------------------------
 
 ## Conditions
 
-TODO
+TODO: conditions
 
 ----------------------------------------------------------------------
 

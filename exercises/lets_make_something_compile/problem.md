@@ -104,6 +104,8 @@ To reiterate, your mission is to use `bindings` to load in your compiled module 
 
 To ensure your solution is correct, run: `{appname} verify {boilerplate:myaddon}`
 
+TODO: WAAAAAAY simplify
+
 ## Conditions
 
 Your submission will be compiled using `node-gyp rebuild` and executed with `node .`, the standard output must be "I am a native addon and I AM ALIVE!" and this must be printed from the compiled (C++) component of your solution.

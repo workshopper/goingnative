@@ -24,6 +24,8 @@ To recap, your mission is:
 * Create a new scope for your function
 * Create and return the handle for a new `v8::Int32` containg the length of the string passed into your function.
 
+TODO: simplify
+
 ## Conditions
 
 Your submission will be compiled using `node-gyp rebuild` and executed with `node . "some string"`. Standard output will be checked for an upper-cased version of that string and your code will be checked to ensure that the C++ code is performing the upper-casing.
