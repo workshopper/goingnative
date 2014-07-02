@@ -3,7 +3,7 @@
 using namespace v8;
 
 NAN_METHOD(Length) {
-  NanEscapableScope();
+  NanScope();
 
   int len = strlen(*String::Utf8Value(args[0].As<String>()));
   Local<Number> v8len = NanNew(len);

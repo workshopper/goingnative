@@ -50,7 +50,7 @@ class MyWorker : public NanAsyncWorker {
 };
 
 NAN_METHOD(Delay) {
-  NanEscapableScope();
+  NanScope();
 
   int delay = args[0].As<Number>()->IntegerValue();
   Local<Function> callback = args[1].As<Function>();
