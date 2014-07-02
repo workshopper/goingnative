@@ -17,12 +17,19 @@ The JavaScript change is simply a matter of reading `process.argv[2]`, the first
 
 The C++ change requires some understanding of argument handling and V8 data types.
 
-- TODO: explain this: printf("%s\n", *String::Utf8Value(args[0].As<String>()));
-  - printf with the format string and newline
-  - args[0]
-  - .As<String>() cast
-  - *String::Utf8Value()
+When you use the macro `NAN_METHOD()`, you automatically have access to an `args` argument inside the generated function. This args argument is an array whose members correspond to the arguments passed into the function.
 
+Each element in the array is an object is a v8 type with a special function `As<[type]>()` allowing you to typecast it to a type getting a handle back. So, for example, if we wanted to accept a `v8::Int32` as the 3rd parameter in our function we could call `args[2].As<Int32>()`, and we would receive a handle to the 3rd argument as a 32 bit integer. You will be type casting it as a `v8::String`.
+
+We will then build on top of our `printf` in the previous example, passing our `v8::String` as an argument to be inserted into a *format string*. *hint:* `%s`
+
+But wait! Node is in utf-8 land! `v8::String` includes a function `Utf8Value()` wich converts your argument to a char array that can be safely consumed by printf. Go ahead and use it with `*String::Utf8Value(...)`
+
+To recap, your mission:
+
+* Alter _index.js_ to pass `process.argv[2]` to your native function
+* Grab the first argument as a string from inside `Print` and convert it to a utf-8 char array.
+* Insert it into a format string using printf.
 
 ## Conditions
 
