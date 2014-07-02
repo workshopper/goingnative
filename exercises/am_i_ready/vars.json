@@ -1,27 +1,38 @@
 {
-  "Debian" : {
-    "gcc" : "apt-get install build-essential",
-    "python" : "apt-get install python-all",
-    "gyp" : "sudo npm install -g node-gyp"
+  "Versions" : {
+    "gcc" : "4.4.0",
+    "llvm" : "5.0",
+    "python" : {
+      "min" : "2.6.x",
+      "max" : "2.7.x"
+    },
+    "gyp" : "0.12.0"
   },
-  "Ubuntu" : {
-    "gcc" : "apt-get install build-essential",
-    "python" : "sudo add-apt-repository ppa:fkrull/deadsnakes\nsudo apt-get update\nsudo apt-get install python2.7",
-    "gyp" : "sudo npm install -g node-gyp"
-  },
-  "Arch Linux" : {
-    "gcc" : "base-devel",
-    "python" : "pacman -S python2",
-    "gyp" : "sudo npm install -g node-gyp"
-  },
-  "Darwin" : {
-    "gcc" : "TODO",
-    "python" : "TODO",
-    "gyp" : "TODO"
-  },
-  "Other" : {
-    "gcc" : "Unknown OS",
-    "python" : "Unknown OS",
-    "gyp" : "Unknown OS"
+  "Instructions" : {
+    "Debian" : {
+      "gcc" : "apt-get install build-essential",
+      "python" : "apt-get install python-all",
+      "gyp" : "sudo npm install -g node-gyp"
+    },
+    "Ubuntu" : {
+      "gcc" : "apt-get install build-essential",
+      "python" : "sudo add-apt-repository ppa:fkrull/deadsnakes\nsudo apt-get update\nsudo apt-get install python2.7",
+      "gyp" : "sudo npm install -g node-gyp"
+    },
+    "Arch Linux" : {
+      "gcc" : "base-devel",
+      "python" : "pacman -S python2",
+      "gyp" : "sudo npm install -g node-gyp"
+    },
+    "Darwin" : {
+      "gcc" : "TODO",
+      "python" : "TODO",
+      "gyp" : "TODO"
+    },
+    "Other" : {
+      "gcc" : "Unknown OS",
+      "python" : "Unknown OS",
+      "gyp" : "Unknown OS"
+    }
   }
 }
