@@ -4,7 +4,7 @@
 
 [![NPM](https://nodei.co/npm/goingnative.png?downloads=true&stars=true)](https://nodei.co/npm/goingnative/) [![NPM](https://nodei.co/npm-dl/goingnative.png?months=3)](https://nodei.co/npm/goingnative/)
 
-![goingnative](https://raw.github.com/rvagg/goingnative/master/goingnative.png)
+![goingnative](https://github.com/rvagg/goingnative/raw/master/goingnative.png)
 
 ***Please note this is a work in progress and is far from complete but will serve as an interesting introduction***
 
