@@ -3,3 +3,5 @@
 {bold}Name                GitHub Username{/bold}
 -----------------------------------
 Rod Vagg            @rvagg
+Will Blankenship    @wblankenship
+Benjamin Byholm     @kkoopa
