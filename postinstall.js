@@ -1,66 +1,56 @@
 const varstring = require('varstring')
     , getos     = require('getos')
     , fs        = require('fs')
+    , after     = require('after')
 
 
-;(function() {
-  var problem
-    , vars
-    , distro
+var problem
+  , vars
+  , distro
 
 
-  const c = complete(3,function() {
-    if( distro != "Debian" &&
-        distro != "Ubuntu" &&
-        distro != "Darwin" &&
-        distro != "Arch Linux") //Supported distros
-        distro = "Other"
+var done = after(3, function (err) {
+  if (err)
+    throw err
 
-    Object.keys(vars[distro]).forEach(function(v) {
-      vars[distro][v] = "```bash\n  "
-                      + vars[distro][v]
-                      + "\n  ```"
-    })
-
-    var markdown = varstring(problem,vars[distro])
-
-    fs.writeFile('exercises/am_i_ready/problem.md', markdown, function(e) {
-      if(e) console.stderr(e.stack)
-    })
-  })
-
-  fs.readFile("exercises/am_i_ready/problem.md",'utf-8', function(e,data) {
-    if(e)
-      return console.error(e.stack)
-
-    problem = data
-
-    c()
-  })
-
-  fs.readFile("exercises/am_i_ready/vars.json", function(e,data) {
-    if(e)
-      return console.error(e.stack)
-
-    vars = JSON.parse(data).Instructions
-
-    c()
-  })
-
-  getos(function(e,os) {
-    if(e)
-      return console.error(e.stack)
-
-    distro = os
-
-    c()
-  })
-})()
-
-function complete(count,cb) {
-  var calls = 0
-
-  return function() {
-    if(++calls == count) return cb()
+  if (distro != 'Debian' &&
+      distro != 'Ubuntu' &&
+      distro != 'Darwin' &&
+      distro != 'Arch Linux') { //Supported distros
+      distro = 'Other'
   }
-}
+
+  Object.keys(vars[distro]).forEach(function(v) {
+    vars[distro][v] = '```bash\n  '
+                    + vars[distro][v]
+                    + '\n  ```'
+  })
+
+  var markdown = varstring(problem, vars[distro])
+
+  fs.writeFileSync('exercises/am_i_ready/problem.md', markdown, 'utf8')
+})
+
+fs.readFile('exercises/am_i_ready/problem.md.tmpl', 'utf-8', function (err, data) {
+  if (err)
+    return done(err)
+
+  problem = data
+  done()
+})
+
+fs.readFile('exercises/am_i_ready/vars.json', function (err, data) {
+  if (err)
+    return done(err)
+
+  vars = JSON.parse(data).Instructions
+  done()
+})
+
+getos(function (err, os) {
+  if (err)
+    return done(err)
+
+  distro = os
+  done()
+})
