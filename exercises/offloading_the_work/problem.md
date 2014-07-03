@@ -1,18 +1,20 @@
-----------------------------------------------------------------------
+{cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
 ## Task
 
-Your effort on passing the previous exercise is to be congratulated, however you've introduced a critical problem: you're blocking the JavaScript thread so nothing else can be done. Your task is to move the *sleep* off onto a *worker thread* so that the JavaScript thread doesn't block, but you still need to delay the callback for the correct amount of time!
+Your effort on passing the previous exercise is to be congratulated, however you've introduced a critical problem: you're blocking the JavaScript thread so nothing else can be done in your application.
 
-----------------------------------------------------------------------
+Your task now is to move the *sleep* off onto a *worker thread* so that the JavaScript thread doesn't block and can continue with its work, but you still need to delay the callback for the correct amount of time!
+
+{cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
 ## Description
 
-The `usleep()` and `Sleep()` functions put the current thread to sleep so nothing else executes. For your addon, this also includes the JavaScript thread, and this isn't acceptable for a Node.js application that should *never* block.
+The `usleep()` and `Sleep()` functions put the current thread to sleep so nothing else executes. For your add-on, this also includes the whole JavaScript/V8 and Node.js execution environment, and this isn't acceptable for a Node.js application that should *never* block.
 
 In your working directory we have given you a new file named {boilerplate:index.js} that you can use to replace the *index.js* file from your previous solution.
 
-This new JavaScript code will create an interval timer to print a `.` to standard out every 50ms. It will also print out `Waiting` at the start but this is printed *after* the call to your addon to demonstrate just how broken your code is.
+This new JavaScript code will create an interval timer to print a `.` to standard out every 50ms. It will also print out `Waiting` at the start but the code to print this is called *after* the call to your add-on. This will demonstrate just how broken your code is.
 
 Run your code and you will likely see it print this:
 
@@ -21,7 +23,7 @@ Done!
 Waiting
 ```
 
-What you need to do is print this without changing any JavaScript:
+What the code *should* be doing, and what you need to achieve, is this, without changing any JavaScript:
 
 ```
 Waiting..........................Done!
@@ -29,15 +31,15 @@ Waiting..........................Done!
 
 ## Worker threads
 
-Node.js spins up 4 worker threads (by default) in a thread-pool for handling file system I/O. In our C++ code we can easily make use of this thread-pool to offload work from the JavaScript thread. Your task is to get the `usleep()` or `Sleep()` to run on a worker thread and then have the callback fire back in the JavaScript thread.
+Node.js spins up 4 worker threads (by default) in a thread-pool for handling file system I/O. In our C++ code we can easily make use of this thread-pool to offload work from the JavaScript thread. Your task is to get the `usleep()` or `Sleep()` to run on a worker thread and then have the callback fire from within the JavaScript thread.
 
-Thankfully NAN makes this a little easier than it otherwise would.
+Thankfully NAN makes this a little easier than it otherwise would be to achieve.
 
-We have also given you a new file {boilerplate:myaddon.cc} in your current working directory that has a basic structure you can use. It defines a `MyWorker` *class* that NAN uses to define a discrete chunk of asynchronous work.
+We have also given you a new file {boilerplate:myaddon.cc} in your current working directory that has a basic structure you can use. It defines a `MyWorker` C++ *class* that extends the `NanAsyncWorker` class that NAN uses to define a discrete chunk of asynchronous work.
 
 To use your worker class, you'll first need to wrap up a standard V8 `Local<Callback>` in a `NanCallback` object. This protects the callback from garbage collection and exposes a simple `Call()` method that replaces the need to `NanMakeCallback()`.
 
-To use `MyWorker` and `NanCallback` you need to allocate memory on the *"heap"* for them by using the `new` operator. NAN will perform cleanup of both objects for you so you don't need a matching `delete` in this case as you normally would in C++.
+To use `MyWorker` and `NanCallback` you need to allocate memory on the *"heap"* for them by using the `new` operator. NAN will perform clean-up of both objects for you so you don't need a matching `delete` in this case as you normally would in C++.
 
 Things you need to do:
 
@@ -53,16 +55,15 @@ Things you need to do:
 
 4. Put your `usleep()` / `Sleep()` logic into the `MyWorker`s `Execute()` method.
 
-TODO: simplify
-
-----------------------------------------------------------------------
+{cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
 ## Conditions
 
-TODO: conditions
+Your submission will be compiled using `node-gyp rebuild` and executed with `node . x`, where `x` is an integer representing the number of milliseconds to sleep. Your code will be timed to ensure an appropriate amount of time has delayed before the program exits. Standard output will be checked for `"Waiting......Done!"` (with an appropriate number of `.` characters. Your code will be checked to ensure that the C++ code is performing the sleep and that it is performed asynchronously.
 
-----------------------------------------------------------------------
+{cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
  __»__ To print these instructions again, run: `{appname} print`
+ __»__ To print additional learning material relating to these instructions, run: `{appname} more`
  __»__ To compile and test your solution, run: `{appname} verify myaddon`
  __»__ For help run: `{appname} help`

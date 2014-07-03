@@ -51,7 +51,7 @@ Where the first argument equates to what to use as `this` in JavaScript (in most
 
 ## Conditions
 
-Your submission will be compiled using `node-gyp rebuild` and executed with `node . x`, where `x` is an integer representing the number of milliseconds to sleep. Your code will be timed to ensure an appropriate amount of time has delayed before the program exits. Standard output will be checked for `"Done!"`. Your code will be checked to ensure that the C++ code is performing the upper-casing.
+Your submission will be compiled using `node-gyp rebuild` and executed with `node . x`, where `x` is an integer representing the number of milliseconds to sleep. Your code will be timed to ensure an appropriate amount of time has delayed before the program exits. Standard output will be checked for `"Done!"`. Your code will be checked to ensure that the C++ code is performing the sleep.
 
 {cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 

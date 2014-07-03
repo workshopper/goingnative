@@ -12,12 +12,8 @@ const boilerplate  = require('workshopper-boilerplate')
     , packagejson  = require('../../lib/packagejson')
 
 
-      // where node_modules/bindings is so it can be copied to make a submission compilable
-const bindingsDir     = path.dirname(require.resolve('bindings'))
-      // where node_modules/nan is so it can be copied to make a submission compilable
-    , nanDir          = path.dirname(require.resolve('nan'))
       // a place to make a full copy to run a test compile
-    , copyTempDir     = path.join(process.cwd(), '~test-addon.' + Math.floor(Math.random() * 10000))
+const copyTempDir     = path.join(process.cwd(), '~test-addon.' + Math.floor(Math.random() * 10000))
       // a place to make a full copy to replace myaddon.cc with a mock to do a mocked run to test JS
     , copyFauxTempDir = path.join(process.cwd(), '~test-addon-faux.' + Math.floor(Math.random() * 10000))
       // name of the module required in binding.gyp
@@ -58,10 +54,7 @@ exercise.addCleanup(copy.cleanup([ copyTempDir, copyFauxTempDir ]))
 // so they don't need to `npm install bindings`
 function boilerplateSetup (callback) {
   var target = path.join(process.cwd(), exercise.boilerplateOut[boilerplateName])
-    , done   = after(2, callback)
-
-  copy(bindingsDir, path.join(target, 'node_modules/bindings/'), done)
-  copy(nanDir, path.join(target, 'node_modules/nan/'), done)
+  copy.copyDeps(target, callback)
 }
 
 

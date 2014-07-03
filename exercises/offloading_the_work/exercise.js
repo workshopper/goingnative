@@ -9,7 +9,7 @@ const path         = require('path')
     , packagejson  = require('../../lib/packagejson')
 
 
-const solutionFiles   = [ 'myaddon.cc', 'index.js' ]
+const solutionFiles   = [ 'myaddon.cc' ]
       // a place to make a full copy to run a test compile
     , copyTempDir     = path.join(process.cwd(), '~test-addon.' + Math.floor(Math.random() * 10000))
       // a place to make a full copy to replace myaddon.cc with a mock to do a mocked run to test JS
@@ -80,7 +80,7 @@ function execWith (dir, arg, expect, callback) {
 // is no cheating! (e.g. console.log(...))
 function checkJs (mode, callback) {
   var exercise = this
-    , expect   = /FAUX 1\nFAUX 2\nFAUX 3\nWaiting\.\.*FAUX 4\nDone!\n/m
+    , expect   = /FAUX 1\nFAUX 2\nWaiting\.*FAUX 3\n\.\.*FAUX 4\nDone!\n/m
 
   if (!exercise.passed)
     return callback(null, true) // shortcut if we've already had a failure
@@ -132,7 +132,7 @@ function checkExec (mode, callback) {
 
     var delay = Date.now() - start
 
-    if (delay < 100 || delay > 200) {
+    if (delay < 100 || delay > 300) {
       exercise.emit('fail', 'Slept for the right amount of time (asked for 111ms, slept for ' + delay + ')')
       return callback(null, false)
     }
@@ -144,7 +144,7 @@ function checkExec (mode, callback) {
 
       delay = Date.now() - start
 
-      if (delay < 1000 || delay > 1200) {
+      if (delay < 1000 || delay > 1300) {
         exercise.emit('fail', 'Slept for the right amount of time (asked for 1111ms, slept for ' + delay + 'ms)')
         return callback(null, false)
       }
