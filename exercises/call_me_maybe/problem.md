@@ -8,16 +8,18 @@ Implement a simpler timer mechanism in C++ such that when you call a `delay(x, c
 
 ## Description
 
-You can reuse your previous submission but you need to adjust it in two places:
+You can reuse your previous submission but you need to adjust it in two places.
 
-**index.js**: you need to now call a `delay()` method and pass the number of seconds from the command-line as the first argument and a callback as the second. In your callback you should perform a `console.log()` when it is called.
+**index.js**: You must call a `delay()` function, passing the number of seconds from the command-line as the first argument and a callback as the second. In your callback you should perform a `console.log()`.
 
-**myaddon.cc**: You have a number of things to do to make this work, most importantly:
+**myaddon.cc**: You need to implement the delay function.
 
-* Receive a `Number` in the first argument to the method and convert it to a C++ `int` value. The simplest way to do this is use the `handle->IntegerValue()` method which will return a `int64_t` type value. Thankfully we can just call this an `int` but it's worth knowing that it's a 64-bit integer when converted.
+The delay function needs to do the following:
+
+1. Receive a `Number` in the first argument to the method and convert it to a C++ `int` value. Use the `handle->IntegerValue()` method, which returns a `int64_t` type value. Thankfully we can just call this an `int` but it's worth knowing that it's a 64-bit integer when converted.
 
 
-* Make a **sleep** happen. Unfortunately you achieve this differently in C++ depending on your platform, and what's more, you *should* write your native add-ons to be cross-platform compatible. In Windows you would call the built-in function `Sleep(time)` (where `time` is in milliseconds), while in other (*"POSIX-compliant"*) systems such as Linux and OS X, you call `usleep(time)` (where `time` is in microseconds). `usleep()` also requires that we `#include` the *unistd.h* system header.
+2. Make a **sleep** happen. Unfortunately you achieve this differently in C++ depending on your platform, and what's more, you *should* write your native add-ons to be cross-platform compatible. On Windows, you call the built-in function `Sleep(time)` (where `time` is in milliseconds). On "POSIX-compliant" systems like Linux and OS X, you call `usleep(time)` (where `time` is in microseconds). To call `usleep()`, you must `#include` the *unistd.h* system header.
 
 To make a cross-platform sleep, we can use C++ macros to determine whether we are compiling on Windows or not.
 
@@ -37,15 +39,15 @@ usleep(x)
 #endif
 ```
 
-3. Use `NanMakeCallback()` to call the callback function, which will be of type `Function`. Recall that to convert to a `Local<Function>` you can use `argv[1].As<Function>()`. V8 `Function` objects have a `Call()` method on them but `NanMakeCallback()` invokes the necessary Node.js machinery required to wire up proper domains and other debugging support so is the preferred method.
+3. Use `NanMakeCallback()` to call the callback function, which will be of type `Function`. Recall that to convert to a `Local<Function>` you can use `argv[1].As<Function>()`. V8 `Function` objects have a `Call()` method on them that you can use. `NanMakeCallback()` improves on this by wiring up domains and other debugging support, so that's what we'll use here.
 
-A callback can be invoked as follows:
+Use `NanMakeCallback()`` like this:
 
 ```c++
 NanMakeCallback(NanGetCurrentContext()->Global(), callback, 0, NULL);
 ```
 
-Where the first argument equates to what to use as `this` in JavaScript (in most cases it will just be `global`), the second argument is the `Local<Function>`, the third is the number of arguments to apply to the function and the fourth is an array of `Local<Value>` handles. In this case there are zero (`0`) arguments so we can use the C++ `NULL` identifier.
+The first argument specifies what to use as `this` in JavaScript. Here it's just be `global`. The second argument is the function you wish to use as a callback. The third argument is the number of arguments to apply to the function. The fourth argument is an array of `Local<Value>` handles that supply the arguments. In this case, we're not passing any arguments to the callback, so we specify `0` arguments and a `NULL` array.
 
 {cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
