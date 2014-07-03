@@ -13,11 +13,17 @@ const child_process = require('child_process')
     , semver        = require('semver')
     , chalk         = require('chalk')
     , bindings      = require('bindings')
-    , cpr           = require('cpr')
+    , after         = require('after')
     , rimraf        = require('rimraf')
+    , copy          = require('../../lib/copy')
 
 
-const testPackageSrc = path.join(__dirname, '../../packages/test-addon/')
+      // where node_modules/bindings is so it can be copied to make a submission compilable
+const bindingsDir     = path.dirname(require.resolve('bindings'))
+      // where node_modules/nan is so it can be copied to make a submission compilable
+    , nanDir          = path.dirname(require.resolve('nan'))
+    , testPackageSrc = path.join(__dirname, '../../packages/test-addon/')
+      // a place to make a full copy to run a test compile
     , testPackageRnd = path.join(process.cwd(), '~test-addon.' + Math.floor(Math.random() * 10000))
 
 
@@ -30,8 +36,17 @@ exercise.addProcessor(processor)
 exercise.addCleanup(cleanup)
 
 
+// copy test package to a temporary location, populate it with bindings and nan
 function setup (mode, callback) {
-  cpr(testPackageSrc, testPackageRnd, callback)
+  copy(testPackageSrc, testPackageRnd, function (err) {
+    if (err)
+      return callback(err)
+
+    var done = after(2, callback)
+
+    copy(bindingsDir, path.join(testPackageRnd, 'node_modules/bindings/'), done)
+    copy(nanDir, path.join(testPackageRnd, 'node_modules/nan/'), done)
+  })
 }
 
 

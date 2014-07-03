@@ -5,8 +5,9 @@ const workshopper = require('workshopper')
     , credits     = require('./credits')
     , menu        = require('./exercises/menu')
     , hooray      = require('workshopper-hooray')
+    , more        = require('workshopper-more')
 
-    , name        = 'goingnative'
+    , appname     = 'goingnative'
     , title       = 'Going Native'
     , subtitle    = '\x1b[23mSelect an exercise and hit \x1b[3mEnter\x1b[23m to begin'
 
@@ -17,7 +18,7 @@ function fpath (f) {
 
 
 workshopper({
-    name        : name
+    name        : appname
   , title       : title
   , subtitle    : subtitle
   , exerciseDir : fpath('./exercises/')
@@ -28,9 +29,17 @@ workshopper({
         fs: 'white'
       , bg: 'black'
     }
-  , menuItems   : [ {
-        name    : 'credits'
-      , handler : credits
-    } ]
+  , commands    : [
+      {
+          name    : 'credits'
+        , handler : credits
+      }
+    , {
+          name    : 'more'
+        , menu    : false
+        , short   : 'm'
+        , handler : more
+      }
+    ]
   , onComplete  : hooray
 })
