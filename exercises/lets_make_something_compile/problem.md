@@ -73,7 +73,7 @@ NAN_METHOD(Print) {
 
 This construct uses a C++ macro from NAN to expose a public *method* that is accessible via V8 to your JavaScript. The method is called `Print` on the C++ side and it needs a body; you need to add code to make something happen when it's called!
 
-Your method body should use the standard C `printf()` function to print to standard out (you can also use `cout` for more idiomatic C++ if you dare). Use it like so: `printf("format string", arg1, arg2, ...);` where `"format string"` is a simple string that can contain argument specifiers such as `%s` to insert a string argument and `%d` to insert an integer argument. e.g. `printf("Speed: %d %s\n", 100, "mph");`. You need to print the following line, and don't forget an explicit new-line character:
+Your method body should use the standard C `printf()` function to print to standard out (you can also use `cout` for more idiomatic C++ if you dare). Simply provide text surrounded by double-quotes: `printf("a string");`. You need to print the following line, and don't forget an explicit new-line character:
 
   "I am a native addon and I AM ALIVE!"
 

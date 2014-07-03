@@ -3,7 +3,8 @@
 using namespace v8;
 
 NAN_METHOD(Print) {
-  printf("%s\n", *String::Utf8Value(args[0].As<String>()));
+  Local<String> str = args[0].As<String>();
+  printf("%s\n", *String::Utf8Value(str));
   NanReturnUndefined();
 }
 
