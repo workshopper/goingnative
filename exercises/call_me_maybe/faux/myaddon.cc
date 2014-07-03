@@ -20,7 +20,7 @@ NAN_METHOD(Delay) {
    usleep(delay * 1000);
   #endif
 
-  NanMakeCallback(Context::GetCurrent()->Global(), callback, 0, NULL);
+  NanMakeCallback(NanGetCurrentContext()->Global(), callback, 0, NULL);
 
   NanReturnUndefined();
 }

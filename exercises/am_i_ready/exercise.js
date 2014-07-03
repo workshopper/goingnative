@@ -18,11 +18,7 @@ const child_process = require('child_process')
     , copy          = require('../../lib/copy')
 
 
-      // where node_modules/bindings is so it can be copied to make a submission compilable
-const bindingsDir     = path.dirname(require.resolve('bindings'))
-      // where node_modules/nan is so it can be copied to make a submission compilable
-    , nanDir          = path.dirname(require.resolve('nan'))
-    , testPackageSrc = path.join(__dirname, '../../packages/test-addon/')
+const testPackageSrc = path.join(__dirname, '../../packages/test-addon/')
       // a place to make a full copy to run a test compile
     , testPackageRnd = path.join(process.cwd(), '~test-addon.' + Math.floor(Math.random() * 10000))
 
@@ -38,15 +34,7 @@ exercise.addCleanup(cleanup)
 
 // copy test package to a temporary location, populate it with bindings and nan
 function setup (mode, callback) {
-  copy(testPackageSrc, testPackageRnd, function (err) {
-    if (err)
-      return callback(err)
-
-    var done = after(2, callback)
-
-    copy(bindingsDir, path.join(testPackageRnd, 'node_modules/bindings/'), done)
-    copy(nanDir, path.join(testPackageRnd, 'node_modules/nan/'), done)
-  })
+  copy(testPackageSrc, testPackageRnd, callback)
 }
 
 
@@ -247,6 +235,8 @@ function checkNodeGyp (pass, callback) {
 function checkBuild (pass, callback) {
   if (!pass)
     return callback()
+
+  console.log('Running `node-gyp`, this may take a few minutes if it hasn\'t been run before...')
 
   child_process.exec('node-gyp rebuild', { cwd: testPackageRnd, env: process.env }, function (err, stdout, stderr) {
     if (err) {
