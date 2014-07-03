@@ -77,7 +77,7 @@ Your method body should use the standard C `printf()` function to print to stand
 
   "I am a native addon and I AM ALIVE!"
 
-Finally, nearly always, you must return a value from your function even if it is simply undefined. Nan includes serveral functions to accomplish this, such as `NanReturnValue(Handle<Value>)` and `NanReturnUndefined()`. At the bottom of your function, return undefined.
+Finally, you must return a value from your JavaScript-exposed method even if it is simply `undefined`. NAN includes several helper functions to accomplish this, but in this case you can just use `NanReturnUndefined()` at the bottom of your function (i.e. no explicit `return`, that's taken care of for you).
 
 ```cpp
 void Init(Handle<Object> exports) {
