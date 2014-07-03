@@ -41,11 +41,15 @@ To use `MyWorker` and `NanCallback` you need to allocate memory on the *"heap"* 
 
 Things you need to do:
 
+
 1. Wrap your `Local<Callback>` in a `NanCallback` with: `NanCallback nanCallback = new NanCallback(callback);`
+
 
 2. Create a `MyWorker` and pass it the `nanCallback` and your amount of timer `delay` with `MyWorker worker = new MyWorker(nanCallback, delay);`
 
+
 3. Submit `worker` to the thread-pool with `NanAsyncQueueWorker(worker);`--after this you can return as normal and the asynchronous work will be performed when there is a spare thread for it.
+
 
 4. Put your `usleep()` / `Sleep()` logic into the `MyWorker`s `Execute()` method.
 
