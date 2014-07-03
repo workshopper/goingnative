@@ -15,6 +15,7 @@ const child_process = require('child_process')
     , bindings      = require('bindings')
     , after         = require('after')
     , rimraf        = require('rimraf')
+    , python        = require('check-python')
     , copy          = require('../../lib/copy')
 
 
@@ -153,26 +154,18 @@ function checkGcc (pass, callback) {
 
 
 function checkPython (pass, callback) {
-  child_process.exec('python --version', { env: process.env }, function (err, stdout, stderr) {
+  python(function (err, python, version) {
     if (err) {
-      exercise.emit('fail', '`' + chalk.bold('python') + '` not found in $PATH')
+      exercise.emit('fail', 'Check for `' + chalk.bold('python') + '`: ' + err.message)
       return callback(null, false)
     }
 
-    var versionMatch = stderr.toString().match(/Python (\d+\.\d+\.\d+)/)
-      , versionString = versionMatch && versionMatch[1]
-
-    if (!versionString) {
-      exercise.emit('fail', 'Unknown `' + chalk.bold('python') + '` found in $PATH')
-      return callback(null, false)
-    }
-
-    if (!semver.satisfies(versionString, '>=' + MIN_PYTHON_VERSION)) {
+    if (!semver.satisfies(version, '>=' + MIN_PYTHON_VERSION)) {
       exercise.emit('fail',
             '`'
           + chalk.bold('python')
           + '` version is too old: '
-          + chalk.bold('v' + versionString)
+          + chalk.bold('v' + version)
           + ', please install a version >= '
           + chalk.bold('v' + MIN_PYTHON_VERSION)
           + ' and <= '
@@ -181,12 +174,12 @@ function checkPython (pass, callback) {
       return callback(null, false)
     }
 
-    if (!semver.satisfies(versionString, '~' + MAX_PYTHON_VERSION)) {
+    if (!semver.satisfies(version, '~' + MAX_PYTHON_VERSION)) {
       exercise.emit('fail',
             '`'
           + chalk.bold('python')
           + '` version is too new: '
-          + chalk.bold('v' + versionString)
+          + chalk.bold('v' + version)
           + ', please install a version >= '
           + chalk.bold('v' + MIN_PYTHON_VERSION)
           + ' and <= '
@@ -195,7 +188,7 @@ function checkPython (pass, callback) {
       return callback(null, false)
     }
 
-    exercise.emit('pass', 'Found usable `' + chalk.bold('python') + '` in $PATH: ' + chalk.bold('v' + versionString))
+    exercise.emit('pass', 'Found usable `' + chalk.bold('python') + '` in $PATH: ' + chalk.bold('v' + version))
 
     callback(null, true)
   })
