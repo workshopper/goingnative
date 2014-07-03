@@ -1,15 +1,14 @@
-----------------------------------------------------------------------
+{cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
 ## Task
 
-Create a native Node.js add-on that can be compiled by node-gyp / npm and loaded from Node.js code.
+Create a native Node.js add-on that can be compiled by node-gyp / npm and loaded from Node.js JavaScript code.
 
-----------------------------------------------------------------------
+{cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
 ## Description
 
-You will find a basic skeleton of a Node.js native add-on in a directory named
-*{boilerplate:myaddon}* in your current working directory. To complete this task, you simply need to complete some important parts to make it compile.
+You will find a basic skeleton of a Node.js native add-on in a directory named ***{boilerplate:myaddon}*** in your current working directory. To complete this task, you need to complete some important parts to make it compile.
 
 When your solution is complete, you should be able to compile and run the program without any errors:
 
@@ -28,14 +27,11 @@ I am a native addon and I AM ALIVE!
 
 ### _package.json_
 
-Take a look at your _package.json_. You will find some work has already been done for you, specifically dependencies have been included. Lets break down what each do, and why they make your life easier.
+Take a look at your _package.json_. You will find some work has already been done for you, specifically you have two dependencies to assist with add-on development:
 
+* **NAN**: provides a standardized C++ interface to Node and V8
+* **bindings**: a tool to help find the location of the *compiled* version of your add-on during runtime
 
-* `nan` - nan provides a standardized way to build native modules across different versions of node. From their _README.md_:
-    In a moment we will need to tell `node-gyp` where to find nan.
-
-
-*  `bindings` - bindings is a tool that greatly simplifies requiring native modules into your node apps. From their _README.md_:
 
 There is only one thing you need to do in this file, which is to tell node to look for your _.gyp_ file. Your mission: simply add `"gypfile": true` to your _package.json_
 
@@ -106,11 +102,13 @@ To ensure your solution is correct, run: `{appname} verify {boilerplate:myaddon}
 
 TODO: WAAAAAAY simplify
 
+{cyan}──────────────────────────────────────────────────────────────────────{/cyan}
+
 ## Conditions
 
 Your submission will be compiled using `node-gyp rebuild` and executed with `node .`, the standard output must be "I am a native addon and I AM ALIVE!" and this must be printed from the compiled (C++) component of your solution.
 
-----------------------------------------------------------------------
+{cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
  __»__ To print these instructions again, run: `{appname} print`
  __»__ To compile and test your solution, run: `{appname} verify {boilerplate:myaddon}`
