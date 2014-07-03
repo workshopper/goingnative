@@ -9,7 +9,7 @@ const path         = require('path')
     , packagejson  = require('../../lib/packagejson')
 
 
-const solutionFiles   = [ 'myaddon.cc', 'index.js' ]
+const solutionFiles   = [ 'myaddon.cc' ]
       // a place to make a full copy to run a test compile
     , copyTempDir     = path.join(process.cwd(), '~test-addon.' + Math.floor(Math.random() * 10000))
       // a place to make a full copy to replace myaddon.cc with a mock to do a mocked run to test JS
@@ -80,7 +80,7 @@ function execWith (dir, arg, expect, callback) {
 // is no cheating! (e.g. console.log(...))
 function checkJs (mode, callback) {
   var exercise = this
-    , expect   = /FAUX 1\nFAUX 2\nFAUX 3\nWaiting\.\.*FAUX 4\nDone!\n/m
+    , expect   = /FAUX 1\nFAUX 2\nWaiting\.*FAUX 3\n\.\.*FAUX 4\nDone!\n/m
 
   if (!exercise.passed)
     return callback(null, true) // shortcut if we've already had a failure
