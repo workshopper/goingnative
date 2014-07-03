@@ -56,7 +56,7 @@ function execWith (dir, str, callback) {
           return callback(err)
         }
 
-        var pass = stdout.toString() == str.length + '\n'
+        var pass = stdout.toString() == new Buffer(str).length + '\n'
 
         if (!pass) {
           process.stderr.write(stderr)
@@ -84,7 +84,7 @@ function checkJs (mode, callback) {
       return callback(null, false)
     }
 
-    execWith(copyFauxTempDir, 'FAUX', function (err, pass) {
+    execWith(copyFauxTempDir, '♥ FAUX', function (err, pass) {
       if (err)
         return callback(err)
       if (!pass) {
@@ -92,7 +92,7 @@ function checkJs (mode, callback) {
         return callback(null, false)
       }
 
-      execWith(copyFauxTempDir, 'FAUX FAUX FAUX FAUX', function (err, pass) {
+      execWith(copyFauxTempDir, '♥ FAUX FAUX FAUX FAUX ♥', function (err, pass) {
         if (err)
           return callback(err)
 

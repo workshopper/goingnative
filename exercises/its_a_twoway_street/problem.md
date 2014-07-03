@@ -1,36 +1,46 @@
-----------------------------------------------------------------------
+{cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
 ## Task
 
 Create a native Node.js add-on that can read a `String` argument and returns a integer indicating the length of that string.
 
-----------------------------------------------------------------------
+{cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
 ## Description
 
-You are going to add a new `length()` function to your native addon! This function will accept a string and return back the number of characters in that string.
+Instead of a `print()` method, your native add-on now needs to have a `length()` method. This function will accept a string as per the last exercise and return back the number of characters in that string.
 
-First and foremost, lets try and tackle the fun concept of v8 scopes on the C++ side of things. Nan offers a great function `NanScope()` to simplify this. When you call `NanScope()`, v8 will allocate every v8 object declared from that point forward in the current scope until you close the scope or another scope is opened. Since we will be creating a new v8 object in our function to return, it is crucial that we ensure it is within the scope of this function. Long story short, throw `NanScope()` at the top of every function in which you _create_ a new v8 object.
+We need the 8-byte character length of the string which will be different than `String#length` in JavaScript for strings that include multi-byte UTF-8 characters (such as "♥").
 
-Next, there is a standard function in C `strlen`, which accepts a c style string and returns its length! For example, after  `int len = strlen("Heyayay");`, len would be equal to 7. You are going to use this to determine the number of characters in the string passed into your function.
+To calculate the length you can use the standard C function `strlen()`. e.g. `int len = strlen("a string");` will result in a `len` value of `8`. You can pass in the `*String::Utf8Value(str)` construct to calculate the length of the V8 `String`.
 
-We also need to understand the concept of creating new v8 objects. Nan also provides a nifty little utility for this, `NanNew<Type>(value)` will create a new v8 object that represents the value contained in `value` and will have the v8 type of `Type`, and return to you the handle for that new object. You will be creating an Int32 of your legnth of the string passed to your function.
+We could use `*String::AsciiValue(str)` but this would squash the multi-byte characters into single bytes and give us the wrong length.
 
-Finally, you are going to need to retun your fancy new handle back to JavaScript! You can acheive this through `NanReturnValue(value)`. This has the added benefit of closing the current scope you created with `NanScope()` for you.
+Try and print out the length with `printf("length: %d\n", len)` and see that you are calculating the length properly.
 
-To recap, your mission is:
+Next we need to tackle the tricky concept of V8 **scopes**.
 
-* Create a new function `length()` that your native module will export. Make sure to call it from `index.js` passing it `process.args[2]`
-* Create a new scope for your function
-* Create and return the handle for a new `v8::Int32` containg the length of the string passed into your function.
+C++ doesn't have automatic garbage collection, but JavaScript does. V8 tries to bridge the gap by providing an environment in C++ such that your objects interact directly with the garbage collector, even if they are created in C++.
 
-TODO: simplify
+It's not a fully automatic process unfortunately, to replicate the concept of function scoping of variables, V8 introduces a `HandleScope`. When you declare a `HandleScope` at the top of a C++ function, all V8 objects *created* within that function will be *attached* to that scope in the same way that a `function` in JavaScript will capture new variables declared within it.
+
+To declare one of these scopes in your code, use the NAN `NanScope()` call at the top of your function. When your function ends, the scope can then pass on the objects to the garbage collector if they have not been passed outside of the scope.
+
+We then need to create a new V8 object representing our string length to pass back in to JavaScript. To create a new V8 type, use `NanNew<Type>(value)`, where `Type` is the V8 type (such as `Number` or `String`) and `value` is the initial C++ value compatible with that type. A `"string"` can be passed to `NanNew<String>()` and a number value can be passed to a `NanNew<Number>(101)`. If you want to assign it to a variable, then use a construct such as:
+
+```c++
+Local<String> str = NanNew<String>("a string");
+```
+
+*Hint: you want to create a `Number` handle, not a `String`.*
+
+{cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
 ## Conditions
 
-Your submission will be compiled using `node-gyp rebuild` and executed with `node . "some string"`. Standard output will be checked for an upper-cased version of that string and your code will be checked to ensure that the C++ code is performing the upper-casing.
+Your submission will be compiled using `node-gyp rebuild` and executed with `node . "some string"`. Standard output will be checked for an integer representing the byte-length of the string passed in. Your code will be checked to ensure that the C++ code is performing the upper-casing.
 
-----------------------------------------------------------------------
+{cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
  __»__ To print these instructions again, run: `{appname} print`
  __»__ To compile and test your solution, run: `{appname} verify myaddon`

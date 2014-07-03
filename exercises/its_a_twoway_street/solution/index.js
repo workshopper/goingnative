@@ -1,3 +1,3 @@
-var binding = require('bindings')('myaddon')
+var addon = require('bindings')('myaddon')
 
-console.log(binding.length(process.argv[2]))
+console.log(addon.length(process.argv[2]))
