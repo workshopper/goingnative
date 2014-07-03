@@ -1,5 +1,5 @@
 {
-  "Versions" : {
+  "versions" : {
     "node": {
       "min": "0.10.14",
       "max": "0.10.x"
@@ -12,26 +12,26 @@
     },
     "gyp" : "0.12.0"
   },
-  "Instructions" : {
+  "instructions" : {
     "Debian" : {
-      "gcc" : "Install with `sudo apt-get install build-essential`",
-      "python" : "Install with `sudo apt-get install python-all`"
+      "gcc" : "Install with `sudo apt-get install build-essential`.",
+      "python" : "Install with `sudo apt-get install python-all`."
     },
-    "Ubuntu" : {
-      "gcc" : "apt-get install build-essential",
-      "python" : "Install with `sudo apt-get install python2.7`"
+    "Ubuntu Linux" : {
+      "gcc" : "Install with `apt-get install build-essential`.",
+      "python" : "Install with `sudo apt-get install python2.7`."
     },
     "Arch Linux" : {
-      "gcc" : "Install with `sudo pacman -S base-devel`",
-      "python" : "Install with `sudo pacman -S python2`"
+      "gcc" : "Install with `sudo pacman -S base-devel`.",
+      "python" : "Install with `sudo pacman -S python2`."
     },
     "Darwin" : {
-      "gcc" : "Visit <https://developer.apple.com/xcode/downloads/>",
-      "python" : "Visit <https://www.python.org/download/mac>"
+      "gcc" : "Visit <https://developer.apple.com/xcode/downloads/>.",
+      "python" : "Visit <https://www.python.org/download/mac>."
     },
     "Other" : {
-      "gcc" : "Use your native package manager to install build tools including gcc",
-      "python" : "Download from <https://www.python.org/download/releases/2.7.7> or use your package manager"
+      "gcc" : "Use your native package manager to install build tools including gcc.",
+      "python" : "Download from <https://www.python.org/download/releases/2.7.7> or use your package manager."
     }
   }
 }

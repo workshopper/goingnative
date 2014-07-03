@@ -1,50 +1,21 @@
-const varstring = require('varstring')
-    , getos     = require('getos')
-    , fs        = require('fs')
-    , after     = require('after')
+const path         = require('path')
+    , varstring    = require('varstring')
+    , getos        = require('getos')
+    , fs           = require('fs')
+    , after        = require('after')
+    , instructions = require('./exercises/am_i_ready/vars.json').instructions
 
 
-var problem
-  , vars
-  , distro
+const tmpl    = path.join(__dirname, 'exercises/am_i_ready/problem.md.tmpl')
+    , out     = path.join(__dirname, 'exercises/am_i_ready/problem.md')
+    , problem = fs.readFileSync(tmpl, 'utf-8')
 
 
-var done = after(3, function (err) {
+getos(function (err, distro) {
   if (err)
     throw err
 
-  if (distro != 'Debian' &&
-      distro != 'Ubuntu' &&
-      distro != 'Darwin' &&
-      distro != 'Arch Linux') { //Supported distros
-      distro = 'Other'
-  }
+  var markdown = varstring(problem, instructions[distro] || instructions.Other)
 
-  var markdown = varstring(problem, vars[distro])
-
-  fs.writeFileSync('exercises/am_i_ready/problem.md', markdown, 'utf8')
-})
-
-fs.readFile('exercises/am_i_ready/problem.md.tmpl', 'utf-8', function (err, data) {
-  if (err)
-    return done(err)
-
-  problem = data
-  done()
-})
-
-fs.readFile('exercises/am_i_ready/vars.json', function (err, data) {
-  if (err)
-    return done(err)
-
-  vars = JSON.parse(data).Instructions
-  done()
-})
-
-getos(function (err, os) {
-  if (err)
-    return done(err)
-
-  distro = os
-  done()
+  fs.writeFileSync(out, markdown, 'utf8')
 })

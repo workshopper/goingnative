@@ -1,4 +1,4 @@
-const versions             = require('./vars.json').Versions
+const versions             = require('./vars.json').versions
     , MIN_GCC_VERSION      = versions.gcc
     , MIN_LLVM_VERSION     = versions.llvm
     , MIN_PYTHON_VERSION   = versions.python.min
