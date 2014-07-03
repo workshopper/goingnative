@@ -49,7 +49,7 @@ _bindings.gyp_ is a JSON-esq file that tells `node-gyp` how to build your projec
 
 *Type `{appname} more` for more information on bindings.gyp.*
 
-### *addon.cc*
+### *myaddon.cc*
 
 Let's write C++! In *{boilerplate:myaddon}/myaddon.cc* you have some things to fill in:
 
@@ -76,6 +76,8 @@ This construct uses a C++ macro from NAN to expose a public *method* that is acc
 Your method body should use the standard C `printf()` function to print to standard out (you can also use `cout` for more idiomatic C++ if you dare). Simply provide text surrounded by double-quotes: `printf("a string");`. You need to print the following line, and don't forget an explicit new-line character:
 
   "I am a native addon and I AM ALIVE!"
+
+Finally, nearly always, you must return a value from your function even if it is simply undefined. Nan includes serveral functions to accomplish this, such as `NanReturnValue(Handle<Value>)` and `NanReturnUndefined()`. At the bottom of your function, return undefined.
 
 ```cpp
 void Init(Handle<Object> exports) {
