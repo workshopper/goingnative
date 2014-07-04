@@ -8,7 +8,7 @@ Finish your add-on by adding a C++ function that prints a message to standard ou
 
 ## Description
 
-Because C++ is no simple matter, you have been provided with a skeleton of an add-on file. Mode the file named ***{boilerplate:myaddon.cc}*** in your current working directory, *to* the directory containing your add-on, calling it *myaddon.cc*.
+Because C++ is no simple matter, you have been provided with a skeleton of an add-on file. Move the file named ***{boilerplate:myaddon.cc}*** in your current working directory, *to* the directory containing your add-on, calling it *myaddon.cc*.
 
 When your solution is complete, compiling and running the add-on will succeed without errors:
 
