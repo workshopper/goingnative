@@ -23,9 +23,9 @@ Look at your _package.json_. It has two dependencies that assist with add-on dev
 
 Your mission: tell node to look for your _.gyp_ file. To do this, add `"gypfile": true` to your _package.json_
 
-### Mission: finish *bindings.gyp*
+### Mission: finish *binding.gyp*
 
-_bindings.gyp_ is a JSON-esq file that tells `node-gyp` how to build your project. Look inside it now. A basic structure has provided for you, but it needs more work.
+_binding.gyp_ is a JSON-esq file that tells `node-gyp` how to build your project. Look inside it now. A basic structure has provided for you, but it needs more work.
 
 
 * `"target_name"` of the single target listed in the file must be the exact name of your add-on. It needs to match the name you use for it in your JavaScript file *and* the name you use in the `NODE_MODULE()` macro in your C++ file. *Set it to `"myaddon"`*.

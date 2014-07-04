@@ -29,7 +29,7 @@ The loaded `addon` will behave like any normal Node.js module, so you can fetch 
 
 ## Conditions
 
-Your submission will be tested against a working native add-on to determine if your JavaScript works.
+Your submission will be tested against a working native add-on to determine if your JavaScript works. You must call the `print()` function exposed by the working add-on.
 
 {cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
