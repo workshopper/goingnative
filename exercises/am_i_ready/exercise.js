@@ -13,8 +13,6 @@ const child_process = require('child_process')
     , fs            = require('fs')
     , semver        = require('semver')
     , chalk         = require('chalk')
-    , bindings      = require('bindings')
-    , after         = require('after')
     , rimraf        = require('rimraf')
     , python        = require('check-python')
     , copy          = require('../../lib/copy')
@@ -168,16 +166,29 @@ function checkMsvc (pass, callback) {
       })[0]
 
   if (!msvsVersion) {
-    exercise.emit('fail', 'Check for ' + chalk.bold('Microsoft Visual Studio') + ' version 2011, 2012 or 2013: not found on system')
+    exercise.emit('fail',
+        'Check for '
+      + chalk.bold('Microsoft Visual Studio')
+      + ' version 2011, 2012 or 2013: not found on system'
+    )
     return callback(null, false)
   }
 
   if (!fs.existsSync(path.join(process.env[msvsVars[msvsVersion]], 'vsvars32.bat'))) {
-    exercise.emit('fail', 'Check for ' + chalk.bold('Microsoft Visual Studio') + ' version 2011, 2012 or 2013: not found on system')
+    exercise.emit('fail',
+        'Check for '
+      + chalk.bold('Microsoft Visual Studio')
+      + ' version 2011, 2012 or 2013: not found on system'
+    )
     return callback(null, false)
   }
 
-  exercise.emit('pass', 'Found usable `' + chalk.bold('Microsoft Visual Studio') + '`: ' + chalk.bold(msvsVersion))
+  exercise.emit('pass',
+      'Found usable `'
+    + chalk.bold('Microsoft Visual Studio')
+    + '`: '
+    + chalk.bold(msvsVersion)
+  )
 
   callback(null, true)
 }
@@ -226,23 +237,12 @@ function checkPython (pass, callback) {
 
 
 function checkNodeGyp (pass, callback) {
-  // note we can't reliably trap stdout on Windows for `node-gyp -v`, perhaps because of the
-  // immediate `process.exit(0)` after a `console.log(version)`?
-  child_process.exec('npm ls -g --depth 0', { env: process.env }, function (err, stdout, stderr) {
-    if (err) {
-      //Added some debugging to give insight into why things are failing.
-      exercise.emit('fail', '`' + chalk.bold('node-gyp') + '` not found in $PATH:\n'+err.stack)
-      console.log(stdout)
-      console.log(stderr)
-      return callback(null, false)
-    }
 
-    var versionMatch = stdout.toString().match(/node-gyp@(\d+\.\d+\.\d+)/)
-      , versionString = versionMatch && versionMatch[1]
-
+  function checkVersionString (print, versionString) {
     if (!versionString) {
-      exercise.emit('fail', 'Unknown `' + chalk.bold('node-gyp') + '` found in $PATH')
-      return callback(null, false)
+      if (print)
+        exercise.emit('fail', 'Unknown `' + chalk.bold('node-gyp') + '` found in $PATH')
+      return false
     }
 
     if (!semver.satisfies(versionString, '>=' + MIN_NODE_GYP_VERSION)) {
@@ -254,13 +254,88 @@ function checkNodeGyp (pass, callback) {
           + ', please install a version >= '
           + chalk.bold('v' + MAX_PYTHON_VERSION)
       )
-      return callback(null, false)
+      return false
     }
 
+    return true
+  }
 
-    exercise.emit('pass', 'Found usable `' + chalk.bold('node-gyp') + '` in $PATH: ' + chalk.bold('v' + versionString))
+  function npmLsG (callback) {
+    // note we can't reliably trap stdout on Windows for `node-gyp -v`, perhaps because of the
+    // immediate `process.exit(0)` after a `console.log(version)`?
+    child_process.exec('npm ls -g --depth 0', { env: process.env }, function (err, stdout, stderr) {
+      if (err) {
+        //Added some debugging to give insight into why things are failing.
+        exercise.emit('fail', '`' + chalk.bold('node-gyp') + '` not found by `npm ls -g`')
+        process.stdout.write(stdout)
+        process.stderr.write(stderr)
+        return callback(null, false)
+      }
 
-    callback(null, true)
+      var versionMatch = stdout.toString().match(/node-gyp@(\d+\.\d+\.\d+)/)
+        , versionString = versionMatch && versionMatch[1]
+
+      callback(null, checkVersionString(true, versionString), versionString)
+    })
+  }
+
+  function nodeGypV (print, callback) {
+    // note we can't reliably trap stdout on Windows for `node-gyp -v`, perhaps because of the
+    // immediate `process.exit(0)` after a `console.log(version)`?
+    child_process.exec('node-gyp -v', { env: process.env }, function (err, stdout, stderr) {
+      if (err) {
+        if (print) {
+          //Added some debugging to give insight into why things are failing.
+          exercise.emit('fail', '`' + chalk.bold('node-gyp') + '` not found by `npm ls -g`')
+          process.stdout.write(stdout)
+          process.stderr.write(stderr)
+        }
+        return callback(null, false)
+      }
+
+      var versionMatch = stdout.toString().match(/v(\d+\.\d+\.\d+)/)
+        , versionString = versionMatch && versionMatch[1]
+
+      callback(null, checkVersionString(false, versionString), versionString)
+    })
+  }
+
+  function passFail (pass, versionString) {
+    exercise.emit(
+        pass ? 'pass' : 'fail'
+      , 'Found usable `' + chalk.bold('node-gyp') + '` in $PATH'
+        + (pass && versionString ? ': ' + chalk.bold('v' + versionString) : '')
+    )
+  }
+
+  // this pyramid of nasty is for the following reasons:
+  // * `npm ls -g` is frail and will break if you have anything even partially broken
+  //   installed globally, so we can't rely on it for a first-run
+  // * `node-gyp -v` is semi-busted on Windows because of the way Node handles
+  //   stdin, 50% of the time it gets lost and not passed up through child_process
+  // Solution is to try `node-gyp -v` twice and then resort to `npm ls -g`
+  // to play the odds...
+  // Need a better solution, idea from @visnup is to `node-gyp -v > out`
+
+  nodeGypV(false, function (err, pass, versionString) {
+    if (pass) {
+      passFail(pass, versionString)
+      return callback(null, true)
+    }
+
+    nodeGypV(true, function (err, pass, versionString) {
+      if (pass) {
+        passFail(pass, versionString)
+        return callback(null, true)
+      }
+
+      npmLsG(function (err, pass, versionString) {
+        passFail(pass, versionString)
+        callback(null, pass)
+      })
+
+    })
+
   })
 }
 
