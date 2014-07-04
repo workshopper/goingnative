@@ -1,0 +1,14 @@
+{
+  "name": "myaddon",
+  "version": "1.0.0",
+  "description": "My Awesome Addon",
+  "main": "index.js",
+  "scripts": {
+    "install": "node-gyp rebuild"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "bindings": "^1.2.1",
+    "nan": "^1.2.0"
+  }
+}

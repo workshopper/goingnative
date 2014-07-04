@@ -2,13 +2,13 @@
 
 ## Task
 
-Create a native Node.js add-on that can be compiled by node-gyp / npm and loaded from Node.js JavaScript code.
+Finish your add-on by adding a C++ function that prints a message to standard output when invoked by JavaScript.
 
 {cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
 ## Description
 
-A skeleton of a Node.js native add-on is in a directory named ***{boilerplate:myaddon}*** in your current working directory. The add-on is missing some pieces. You need to supply the missing pieces to make it compile.
+Because C++ is no simple matter, you have been provided with a skeleton of an add-on file. Mode the file named ***{boilerplate:myaddon.cc}*** in your current working directory, *to* the directory containing your add-on, calling it *myaddon.cc*.
 
 When your solution is complete, compiling and running the add-on will succeed without errors:
 
@@ -23,34 +23,9 @@ Running the add-on should print the following text:
 I am a native addon and I AM ALIVE!
 ```
 
-## Your mission!
-
-### Mission: finish *package.json*
-
-Look at your _package.json_. It has two dependencies that assist with add-on development:
-
-* **NAN**: a standardized C++ interface to Node and V8
-* **bindings**: a tool to help find the location of the *compiled* version of your add-on during runtime
-
-*Type `{appname} more` for more information on these dependencies.*
-
-Your mission: tell node to look for your _.gyp_ file. To do this, add `"gypfile": true` to your _package.json_
-
-### Mission: finish *bindings.gyp*
-
-_bindings.gyp_ is a JSON-esq file that tells `node-gyp` how to build your project. Look inside it now. A basic structure has provided for you, but it needs more work.
-
-* `"target_name"` of the single target listed in the file must be the exact name of your add-on. It needs to match the name you use for it in your JavaScript file *and* the name you use in the `NODE_MODULE()` macro in your C++ file. *Set it to `"myaddon"`*.
-* The `"sources"` array must include the file name of the C++ file used by your add-on. *Add `myaddon.cc`*.
-* The `"include_dirs"` array tells the compiler where to find the *nan.h* header file used by NAN. *Set it to this text:*
-
-  "<!(node -e \"require('nan')\")"
-
-*Type `{appname} more` for more information on bindings.gyp.*
-
 ### Mission: write *myaddon.cc*
 
-Let's write C++! In *{boilerplate:myaddon}/myaddon.cc* you have some things to fill in:
+Let's write C++! In *myaddon.cc* you have some things to fill in:
 
 ```cpp
 #include <nan.h>
@@ -122,18 +97,6 @@ When you have these tasks complete, type:
 
 and watch your add-on compile. Watch for errors and fix anything that prevents a successful compilation.
 
-### Mission: write *index.js*
-
-Your JavaScript now needs to *load* your native add-on into the Node.js runtime and call the `print()` method. We are using the *bindings* library to simplify the locating and loading of the compiled binary file. Load your add-on module with:
-
-```js
-var addon = require('modulename')
-```
-
-Where `modulename` is the name in your *binding.gyp* and your `NODE_MODULE` declaration.
-
-Then go ahead and call the `print()` method you defined and see if your code executes as expected!
-
 {cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
 ## Conditions
@@ -144,5 +107,5 @@ Your submission will be compiled using `node-gyp rebuild` and executed with `nod
 
  __»__ To print these instructions again, run: `{appname} print`
  __»__ To print additional learning material relating to these instructions, run: `{appname} more`
- __»__ To compile and test your solution, run: `{appname} verify {boilerplate:myaddon}`
+ __»__ To compile and test your solution, run: `{appname} verify myaddon`
  __»__ For help run: `{appname} help`
