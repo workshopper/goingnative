@@ -228,7 +228,7 @@ function checkPython (pass, callback) {
 function checkNodeGyp (pass, callback) {
   // note we can't reliably trap stdout on Windows for `node-gyp -v`, perhaps because of the
   // immediate `process.exit(0)` after a `console.log(version)`?
-  child_process.exec('nipm ls -g --depth 0', { env: process.env }, function (err, stdout, stderr) {
+  child_process.exec('npm ls -g --depth 0', { env: process.env }, function (err, stdout, stderr) {
     if (err) {
       //Added some debugging to give insight into why things are failing.
       exercise.emit('fail', '`' + chalk.bold('node-gyp') + '` not found in $PATH:\n'+err.stack)
