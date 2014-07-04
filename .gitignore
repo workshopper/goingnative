@@ -1,4 +1,5 @@
 node_modules
 docker-host
+docker-host.npm-tutor
 build/
 exercises/am_i_ready/problem.md
