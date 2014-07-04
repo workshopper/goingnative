@@ -10,6 +10,7 @@ const versions             = require('./vars.json').versions
 
 const child_process = require('child_process')
     , path          = require('path')
+    , fs            = require('fs')
     , semver        = require('semver')
     , chalk         = require('chalk')
     , bindings      = require('bindings')
@@ -17,6 +18,7 @@ const child_process = require('child_process')
     , rimraf        = require('rimraf')
     , python        = require('check-python')
     , copy          = require('../../lib/copy')
+    , win           = process.platform == 'win32'
 
 
 const testPackageSrc = path.join(__dirname, '../../packages/test-addon/')
@@ -45,12 +47,14 @@ function setup (mode, callback) {
 
 
 function cleanup (mode, pass, callback) {
-  rimraf(testPackageRnd, callback)
+  setTimeout(function () {
+    rimraf(testPackageRnd, callback)
+  }, 1000)
 }
 
 
 function processor (mode, callback) {
-  var checks = [ checkNode, checkGcc, checkPython, checkNodeGyp, checkBuild ]
+  var checks = [ checkNode, win ? checkMsvc : checkGcc, checkPython, checkNodeGyp, checkBuild ]
     , pass   = true
 
   ;(function checkNext (curr) {
@@ -153,6 +157,32 @@ function checkGcc (pass, callback) {
 }
 
 
+function checkMsvc (pass, callback) {
+  var msvsVars    = {
+          2013: 'VS130COMNTOOLS'
+        , 2012: 'VS120COMNTOOLS'
+        , 2011: 'VS110COMNTOOLS'
+      }
+    , msvsVersion = Object.keys(msvsVars).filter(function (k) {
+        return !!process.env[msvsVars[k]]
+      })[0]
+
+  if (!msvsVersion) {
+    exercise.emit('fail', 'Check for ' + chalk.bold('Microsoft Visual Studio') + ' version 2011, 2012 or 2013: not found on system')
+    return callback(null, false)
+  }
+
+  if (!fs.existsSync(path.join(process.env[msvsVars[msvsVersion]], 'vsvars32.bat'))) {
+    exercise.emit('fail', 'Check for ' + chalk.bold('Microsoft Visual Studio') + ' version 2011, 2012 or 2013: not found on system')
+    return callback(null, false)
+  }
+
+  exercise.emit('pass', 'Found usable `' + chalk.bold('Microsoft Visual Studio') + '`: ' + chalk.bold(msvsVersion))
+
+  callback(null, true)
+}
+
+
 function checkPython (pass, callback) {
   python(function (err, python, version) {
     if (err) {
@@ -196,13 +226,15 @@ function checkPython (pass, callback) {
 
 
 function checkNodeGyp (pass, callback) {
-  child_process.exec('node-gyp -v', { env: process.env }, function (err, stdout) {
+  // note we can't reliably trap stdout on Windows for `node-gyp -v`, perhaps because of the
+  // immediate `process.exit(0)` after a `console.log(version)`?
+  child_process.exec('npm ls -g --depth 0', { env: process.env }, function (err, stdout, stderr) {
     if (err) {
       exercise.emit('fail', '`' + chalk.bold('node-gyp') + '` not found in $PATH')
       return callback(null, false)
     }
 
-    var versionMatch = stdout.toString().match(/v(\d+\.\d+\.\d+)/)
+    var versionMatch = stdout.toString().match(/node-gyp@(\d+\.\d+\.\d+)/)
       , versionString = versionMatch && versionMatch[1]
 
     if (!versionString) {
@@ -253,30 +285,27 @@ function checkBuild (pass, callback) {
 
     exercise.emit('pass', 'Compiled test package')
 
-    var binding
+    child_process.exec(
+          '"'
+        + process.execPath
+        + '" "'
+        + require.resolve('./child')
+        + '" '
+        + testPackageRnd
+      , { env: process.env }
+      , function (err, stdout, stderr) {
+          stdout.toString().split(/\n/).filter(Boolean).forEach(function (s) {
+            exercise.emit('pass', s)
+          })
 
-    try {
-      binding = bindings({ module_root: testPackageRnd, bindings: 'test' })
-    } catch (e) {
-      exercise.emit('fail', 'Could not properly compile test addon, error finding binding: ' + e.message)
-      return callback(null, false)
-    }
+          stderr.toString().split(/\n/).filter(Boolean).forEach(function (s) {
+            exercise.emit('fail', s)
+          })
 
-    exercise.emit('pass', 'Found compiled test binding file')
+          exercise.emit(stderr.length ? 'fail' : 'pass', 'Test binding file works as expected')
 
-    if (!binding) {
-      exercise.emit('fail', 'Could not properly compile test addon, did not load binding')
-      return callback(null, false)
-    }
-
-    if (binding.test !== 'OK') {
-      exercise.emit('fail', 'Could not properly compile test addon, binding did not behave properly')
-      return callback(null, false)
-    }
-
-    exercise.emit('pass', 'Test binding file works as expected')
-
-    callback(null, true)
+          callback(null, !stderr.length)
+        })
   })
 }
 
