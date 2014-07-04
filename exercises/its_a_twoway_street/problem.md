@@ -38,6 +38,8 @@ Local<String> str = NanNew<String>("a string");
 
 *Hint: you want to create a `Number` handle, not a `String`.*
 
+In the previous exercise, we returned `undefined` from our function with the NAN helper `NanReturnUndefined()`.  This time, as we are returning a value, we want to pass that value to `NanReturnValue()`.
+
 {cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
 ## Conditions
