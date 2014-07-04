@@ -34,7 +34,7 @@ Local<Number> num = args[2].As<Number>();
 For this exercise, you'll need to extract the function argument as a `String` type for printing. But because JavaScript lives in UTF-8-land you can't just print the string handle! To get a C-compatible string to give to `printf()` you need to get a decoded UTF-8 version of the raw data inside the object. To do this, create a `String::Utf8Value()` object using the string handle. Use the `*` *operator* of the Utf8Value object to pass it to `printf` like this:
 
 ```c++
-printf("str: %s\n", *String::Utf8Value(str));
+printf("%s\n", *String::Utf8Value(str));
 ```
 
 `str` must be a V8 `String` handle.
