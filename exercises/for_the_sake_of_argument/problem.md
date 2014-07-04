@@ -8,16 +8,16 @@ Create a Node.js program that takes a `String` command-line argument, passes it 
 
 ## Description
 
-This exercise involves a simple modification to your code from the previous exercise but we are making two main modifications:
+This exercise starts with your code from the previous exercise, but adds two new features:
 
-1. Read a command-line argument from within *index.js* and pass it to the add-on
-2. Read an argument from the method defined in your C++ add-on code and send it to the `printf()` function
+1. Read a command-line argument from within *index.js* and pass it to the add-on.
+2. Read an argument from the method defined in your C++ add-on code and send it to the `printf()` function.
 
-The JavaScript change is simply a matter of reading `process.argv[2]`, the first user-supplied argument, and providing that as an argument to the add-on method you are calling.
+Feature #1 is implemented entirely in JavaScript. All you need to do is read `process.argv[2]`, the first user-supplied argument, and pass that as an argument to the add-on method.
 
-The C++ change requires some understanding of argument handling and V8 data types.
+Feature #2 is a C++ change. To implement it, you'll need to learn about argument handling and V8 data types.
 
-V8 objects are generally contained within a *"handle"*, a special wrapper for the object that allows it to behave properly inside V8. Most of the time a handle will be a `Local`. A `String` handle would be defined as `Local<String>`.
+### I wanted an argument!
 
 When you use the macro `NAN_METHOD()`, you automatically have access to an `args` array inside the method even though you don't see it declared. The elements of this array correspond to the arguments passed in, so `args[0]` is the first argument.
 
@@ -27,17 +27,19 @@ Each element in the array is an object is a V8 type with a special function `As<
 Local<Number> num = args[2].As<Number>();
 ```
 
-We would then be able to use it as a `Number` type rather than a generic `Object`.
+### Handles
 
-You will need to cast to a `String` type for printing. But because JavaScript lives in UTF-8-land it's not quite so simple! To get a C-compatible string to give to `printf()` you need to get a decoded UTF-8 version of the raw data inside the object. To do this, you need to use the `String::Utf8Value()` object and the `*` *operator* of this object in the following way:
+`Local<Number>` is a V8 object *handle*. A handle is a special wrapper for a C++ object that allows it to behave properly inside V8. Most of the time a handle will be a `Local`. A `String` handle would be defined as `Local<String>`. In this case, we've extracted the third argument as a `Number` type, so we can use it as a number instead of as a generic object.
+
+For this exercise, you'll need to extract the function argument as a `String` type for printing. But because JavaScript lives in UTF-8-land you can't just print the string handle! To get a C-compatible string to give to `printf()` you need to get a decoded UTF-8 version of the raw data inside the object. To do this, create a `String::Utf8Value()` object using the string handle. Use the `*` *operator* of the Utf8Value object to pass it to `printf` like this:
 
 ```c++
 printf("str: %s\n", *String::Utf8Value(str));
 ```
 
-Assuming that `str` is a V8 `String` handle.
+`str` must be a V8 `String` handle.
 
-Note how we are using `printf("format string", arg1, arg2, ...);` where `"format string"` is a simple string that can contain argument specifiers such as `%s` to insert a string argument and `%d` to insert an integer argument. e.g. `printf("Speed: %d %s\n", 100, "mph");`
+Note how we are using `printf("format string", arg1, arg2, ...);`. `"format string"` is a string that can contain argument specifiers, similar to the ones you use with node's `util.format()`.
 
 {cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 

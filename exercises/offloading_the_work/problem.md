@@ -2,15 +2,15 @@
 
 ## Task
 
-Your effort on passing the previous exercise is to be congratulated, however you've introduced a critical problem: you're blocking the JavaScript thread so nothing else can be done in your application.
+Your effort on passing the previous exercise is to be congratulated. However, you've created a bug! You're blocking the JavaScript thread so nothing else can be done in your application.
 
-Your task now is to move the *sleep* off onto a *worker thread* so that the JavaScript thread doesn't block and can continue with its work, but you still need to delay the callback for the correct amount of time!
+Your task now is to move the *sleep* off onto a *worker thread* so that the JavaScript thread doesn't block and can continue with its work. You still need to delay the callback for the correct amount of time!
 
 {cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
 ## Description
 
-The `usleep()` and `Sleep()` functions put the current thread to sleep so nothing else executes. For your add-on, this also includes the whole JavaScript/V8 and Node.js execution environment, and this isn't acceptable for a Node.js application that should *never* block.
+The `usleep()` and `Sleep()` functions put the current thread to sleep so nothing else executes. For your add-on, this also includes the whole JavaScript/V8 and Node.js execution environment. This isn't acceptable for a Node.js application that should *never* block.
 
 In your working directory we have given you a new file named {boilerplate:index.js} that you can use to replace the *index.js* file from your previous solution.
 
@@ -37,7 +37,7 @@ Thankfully NAN makes this a little easier than it otherwise would be to achieve.
 
 We have also given you a new file {boilerplate:myaddon.cc} in your current working directory that has a basic structure you can use. It defines a `MyWorker` C++ *class* that extends the `NanAsyncWorker` class that NAN uses to define a discrete chunk of asynchronous work.
 
-To use your worker class, you'll first need to wrap up a standard V8 `Local<Callback>` in a `NanCallback` object. This protects the callback from garbage collection and exposes a simple `Call()` method that replaces the need to `NanMakeCallback()`.
+To use your worker class, wrap up a standard V8 `Local<Callback>` in a `NanCallback` object. This protects the callback from garbage collection and exposes a simple `Call()` method that replaces the need to use `NanMakeCallback()`.
 
 To use `MyWorker` and `NanCallback` you need to allocate memory on the *"heap"* for them by using the `new` operator. NAN will perform clean-up of both objects for you so you don't need a matching `delete` in this case as you normally would in C++.
 
@@ -50,7 +50,7 @@ Things you need to do:
 2. Create a `MyWorker` and pass it the `nanCallback` and your amount of timer `delay` with `MyWorker worker = new MyWorker(nanCallback, delay);`
 
 
-3. Submit `worker` to the thread-pool with `NanAsyncQueueWorker(worker);`--after this you can return as normal and the asynchronous work will be performed when there is a spare thread for it.
+3. Submit `worker` to the thread-pool with `NanAsyncQueueWorker(worker);` After this you can return as normal and the asynchronous work will be performed when there is a spare thread for it.
 
 
 4. Put your `usleep()` / `Sleep()` logic into the `MyWorker`s `Execute()` method.
