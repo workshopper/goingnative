@@ -232,8 +232,8 @@ function checkNodeGyp (pass, callback) {
     if (err) {
       //Added some debugging to give insight into why things are failing.
       exercise.emit('fail', '`' + chalk.bold('node-gyp') + '` not found in $PATH:\n'+err.stack)
-      exercise.emit(stdout)
-      exercise.emit(stderr)
+      console.log(stdout)
+      console.log(stderr)
       return callback(null, false)
     }
 
