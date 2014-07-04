@@ -38,11 +38,13 @@ Local<String> str = NanNew<String>("a string");
 
 *Hint: you want to create a `Number` handle, not a `String`.*
 
+Finally we will want to return the value. This can be achieved directly through nan using the macro `NanReturnValue()` which accepts a handle.
+
 {cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
 ## Conditions
 
-Your submission will be compiled using `node-gyp rebuild` and executed with `node . "some string"`. Standard output will be checked for an integer representing the byte-length of the string passed in. Your code will be checked to ensure that the C++ code is performing the upper-casing.
+Your submission will be compiled using `node-gyp rebuild` and executed with `node . "some string"`. Standard output will be checked for an integer representing the byte-length of the string passed in. Your code will be checked to ensure that the C++ code is returning the lenght of the string.
 
 {cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
