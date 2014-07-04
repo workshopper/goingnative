@@ -84,7 +84,13 @@ function checkJs (mode, callback) {
     }
 
     childProcess.exec(
-        process.execPath + ' ' + require.resolve('../../lib/require-argv2') + ' "' + copyFauxTempDir + '"'
+          '"'
+        + process.execPath
+        + '" "'
+        + require.resolve('../../lib/require-argv2')
+        + '" "'
+        + copyFauxTempDir
+        + '"'
       , function (err, stdout, stderr) {
           if (err) {
             process.stderr.write(stderr)
@@ -92,8 +98,10 @@ function checkJs (mode, callback) {
             return callback(err)
           }
 
-          var pass = stdout.toString() == 'FAUX\n'
+          var pass = stdout.toString().replace('\r', '') == 'FAUX\n'
           if (!pass) {
+            console.log('stdout: [%s]', stdout.toString())
+            console.log('stderr: [%s]', stderr.toString())
             process.stderr.write(stderr)
             process.stdout.write(stdout)
           }
@@ -113,7 +121,13 @@ function checkExec (mode, callback) {
     return callback(null, true) // shortcut if we've already had a failure
 
   childProcess.exec(
-      process.execPath + ' ' + require.resolve('../../lib/require-argv2') + ' "' + copyTempDir + '"'
+        '"'
+      + process.execPath
+      + '" "'
+      + require.resolve('../../lib/require-argv2')
+      + '" "'
+      + copyTempDir
+      + '"'
     , function (err, stdout, stderr) {
         if (err) {
           process.stderr.write(stderr)
@@ -121,7 +135,7 @@ function checkExec (mode, callback) {
           return callback(err)
         }
 
-        var pass = stdout.toString() == expected + '\n'
+        var pass = stdout.toString().replace('\r', '') == expected + '\n'
           , seminl = !pass && stdout.toString() == expected
           , semicase = !pass && !seminl && new RegExp(expected, 'i').test(stdout.toString())
 

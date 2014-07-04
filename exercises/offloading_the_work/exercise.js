@@ -54,7 +54,13 @@ function copyFauxAddon (mode, callback) {
 
 function execWith (dir, arg, expect, callback) {
   childProcess.exec(
-      process.execPath + ' "' + dir + '" "' + arg + '"'
+        '"'
+      + process.execPath
+      + '" "'
+      + dir
+      + '" "'
+      + arg
+      + '"'
     , function (err, stdout, stderr) {
         if (err) {
           process.stderr.write(stderr)
@@ -62,7 +68,7 @@ function execWith (dir, arg, expect, callback) {
           return callback(err)
         }
 
-        var pass = expect.test(stdout.toString())
+        var pass = expect.test(stdout.toString().replace(/\r/g, ''))
 
         if (!pass) {
           process.stderr.write(stderr)

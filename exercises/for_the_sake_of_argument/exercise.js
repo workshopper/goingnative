@@ -62,8 +62,9 @@ function checkJs (mode, callback) {
     }
 
     childProcess.exec(
-          process.execPath
-        + ' "'
+          '"'
+        + process.execPath
+        + '" "'
         + copyFauxTempDir
         + '" "FAUX"'
       , function (err, stdout, stderr) {
@@ -73,7 +74,7 @@ function checkJs (mode, callback) {
             return callback(err)
           }
 
-          var pass = stdout.toString() == 'FAUX\n'
+          var pass = stdout.toString().replace('\r', '') == 'FAUX\n'
           if (!pass) {
             process.stderr.write(stderr)
             process.stdout.write(stdout)
@@ -94,8 +95,9 @@ function checkExec (mode, callback) {
     return callback(null, true) // shortcut if we've already had a failure
 
   childProcess.exec(
-        process.execPath
-      + ' "'
+        '"'
+      + process.execPath
+      + '" "'
       + copyTempDir
       + '" "'
       + expected
@@ -107,7 +109,7 @@ function checkExec (mode, callback) {
           return callback(err)
         }
 
-        var pass = stdout.toString() == expected + '\n'
+        var pass = stdout.toString().replace('\r', '') == expected + '\n'
           , seminl = !pass && stdout.toString() == expected
 
         if (!seminl && !pass) {
