@@ -27,9 +27,11 @@ Your mission: tell node to look for your _.gyp_ file. To do this, add `"gypfile"
 
 _bindings.gyp_ is a JSON-esq file that tells `node-gyp` how to build your project. Look inside it now. A basic structure has provided for you, but it needs more work.
 
+
 * `"target_name"` of the single target listed in the file must be the exact name of your add-on. It needs to match the name you use for it in your JavaScript file *and* the name you use in the `NODE_MODULE()` macro in your C++ file. *Set it to `"myaddon"`*.
 * The `"sources"` array must include the file name of the C++ file used by your add-on. *Add `myaddon.cc`*.
 * The `"include_dirs"` array tells the compiler where to find the *nan.h* header file used by NAN. *Set it to this text:*
+
 
   "<!(node -e \"require('nan')\")"
 

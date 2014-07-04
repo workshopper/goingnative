@@ -59,7 +59,9 @@ Remember to add an explicit new-line character at the end: `\n`.
 
 Finally, you must return a value from your JavaScript-exposed method, even if all you return is `undefined`. NAN includes several helper functions to cover common cases. Here you want NAN's undefined helper: `NanReturnUndefined()`.
 
+
 *Add `NanReturnUndefined()` at the bottom of your function.
+
 
 ### Mission: export `Print` to JavaScript
 
@@ -73,9 +75,11 @@ void Init(Handle<Object> exports) {
 
 Take a deep breath! This line is secretly the equivalent of `module.exports.print = Print` in JavaScript. Let's step through it.
 
+
 * `void Init(Handle<Object> exports) { .. }` defines a function that receives an `exports` object from V8. This is the same object you would receive in a JavaScript module as `module.exports` but it's now exposed as a C++ type.
 * `NanNew()` creates a new V8 object, in this case a `String`. This object is used as the property name of the `exports` object.
 * `NanNew<FunctionTemplate>(Print)->GetFunction()` is how we get a reference to the method we declared earlier so that we can expose it to JavaScript.
+
 
 Notice how we are declaring `print` as an idiomatic JavaScript lower-case name while `Print` is idiomatic C++ title-case. Get used to the verbosity; this is C++ after all!
 
