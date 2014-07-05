@@ -10,28 +10,19 @@ Finish your add-on by adding a C++ function that prints a message to standard ou
 
 Because C++ is no simple matter, you have been provided with a skeleton of an add-on file. Move the file named ***{boilerplate:myaddon.cc}*** in your current working directory, *to* the directory containing your add-on, calling it *myaddon.cc*.
 
-When your solution is complete, compiling and running the add-on will succeed without errors:
-
-```sh
-$ node-gyp rebuild
-$ node .
-```
-
-Running the add-on should print the following text:
-
-```
-I am a native addon and I AM ALIVE!
-```
-
 ### Mission: write *myaddon.cc*
 
-Let's write C++! In *myaddon.cc* you have some things to fill in:
+Let's write C++! In *myaddon.cc* you have some things to fill in.
+
+
+At the top of your file you must include the NAN macros and helper code into your build. You can think of this as *similar* to `require()` in Node.js code. Here's the include line you need:
+
 
 ```cpp
 #include <nan.h>
 ```
 
-At the top of your file will include the NAN macros and helper code into your build. You can think of this as *similar* to `require()` in Node.js code.
+Now you must use the v8 namespace:
 
 ```cpp
 using namespace v8;
@@ -100,6 +91,12 @@ When you have these tasks complete, type:
   node-gyp rebuild
 
 and watch your add-on compile. Watch for errors and fix anything that prevents a successful compilation.
+
+Running the add-on should print the following text:
+
+```
+I am a native addon and I AM ALIVE!
+```
 
 {cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
