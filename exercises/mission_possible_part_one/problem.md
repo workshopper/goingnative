@@ -35,7 +35,7 @@ _binding.gyp_ is a JSON-esq file that tells `node-gyp` how to build your project
 
   "<!(node -e \"require('nan')\")"
 
-*Type `{appname} more` for more information on bindings.gyp.*
+*Type `{appname} more` for more information on binding.gyp.*
 
 {cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
