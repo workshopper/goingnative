@@ -25,6 +25,8 @@ Where `modulename` is the name in your *binding.gyp*.
 
 The loaded `addon` will behave like any normal Node.js module, so you can fetch properties from it, call methods on it, and anything else you are used to doing with a Node.js module.
 
+Aside from loading the addon, you also need to call the `print()` method on that addon.
+
 {cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
 ## Conditions
