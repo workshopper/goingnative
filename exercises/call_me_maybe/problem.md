@@ -10,7 +10,7 @@ Implement a simpler timer mechanism in C++ such that when you call a `delay(x, c
 
 You can reuse your previous submission but you need to adjust it in two places.
 
-**index.js**: You must call a `delay()` function, passing the number of seconds from the command-line as the first argument and a callback as the second. In your callback you should perform a `console.log()`.
+**index.js**: You must call a `delay()` function, passing the number of milliseconds from the command-line as the first argument and a callback as the second. In your callback you should perform a `console.log()`.
 
 **myaddon.cc**: You need to implement the delay function.
 
@@ -19,7 +19,7 @@ The delay function needs to do the following:
 1. Receive a `Number` in the first argument to the method and convert it to a C++ `int` value. Use the `handle->IntegerValue()` method, which returns a `int64_t` type value. Thankfully we can just call this an `int` but it's worth knowing that it's a 64-bit integer when converted.
 
 
-2. Make a **sleep** happen. Unfortunately you achieve this differently in C++ depending on your platform, and what's more, you *should* write your native add-ons to be cross-platform compatible. On Windows, you call the built-in function `Sleep(time)` (where `time` is in milliseconds). On "POSIX-compliant" systems like Linux and OS X, you call `usleep(time)` (where `time` is in microseconds). To call `usleep()`, you must `#include` the *unistd.h* system header.
+2. Make a **sleep** happen. Unfortunately you achieve this differently in C++ depending on your platform, and what's more, you *should* write your native add-ons to be cross-platform compatible. On Windows, you call the built-in function `Sleep(time)` (where `time` is in milliseconds). On "POSIX-compliant" systems like Linux and OS X, you call `usleep(time)` (where `time` is in **microseconds**). To call `usleep()`, you must `#include` the *unistd.h* system header.
 
 To make a cross-platform sleep, we can use C++ macros to determine whether we are compiling on Windows or not.
 
@@ -35,7 +35,7 @@ To make a cross-platform sleep, we can use C++ macros to determine whether we ar
 #ifdef _WIN32
 Sleep(x)
 #else
-usleep(x)
+usleep(x * 1000)
 #endif
 ```
 
