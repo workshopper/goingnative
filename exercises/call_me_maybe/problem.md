@@ -39,7 +39,7 @@ usleep(x * 1000)
 #endif
 ```
 
-3. Use `NanMakeCallback()` to call the callback function, which will be of type `Function`. Recall that to convert to a `Local<Function>` you can use `argv[1].As<Function>()`. V8 `Function` objects have a `Call()` method on them that you can use. `NanMakeCallback()` improves on this by wiring up domains and other debugging support, so that's what we'll use here.
+3. Use `NanMakeCallback()` to call the callback function, which will be of type `Function`. Recall that to convert to a `Local<Function>` you can use `args[1].As<Function>()`. V8 `Function` objects have a `Call()` method on them that you can use. `NanMakeCallback()` improves on this by wiring up domains and other debugging support, so that's what we'll use here.
 
 Use `NanMakeCallback()`` like this:
 
