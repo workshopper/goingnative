@@ -2,7 +2,7 @@
 # goingnative
 **A NodeSchool style workshopper for learning how to write native Node.js addons**
 
-[![NPM](https://nodei.co/npm/goingnative.png?downloads=true&stars=true)](https://nodei.co/npm/goingnative/) [![NPM](https://nodei.co/npm-dl/goingnative.png?months=3)](https://nodei.co/npm/goingnative/)
+[![NPM](https://nodei.co/npm/goingnative.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/goingnative/) [![NPM](https://nodei.co/npm-dl/goingnative.png?months=3&height=3)](https://nodei.co/npm/goingnative/)
 
 ![goingnative](https://github.com/rvagg/goingnative/raw/master/goingnative.png)
 
