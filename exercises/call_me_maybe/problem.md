@@ -33,9 +33,9 @@ To make a cross-platform sleep, we can use C++ macros to determine whether we ar
 
 // (in function)
 #ifdef _WIN32
-Sleep(x)
+Sleep(x);
 #else
-usleep(x * 1000)
+usleep(x * 1000);
 #endif
 ```
 
