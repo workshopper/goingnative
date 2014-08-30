@@ -44,7 +44,7 @@ In the previous exercise, we returned `undefined` from our function with the NAN
 
 ## Conditions
 
-Your submission will be compiled using `node-gyp rebuild` and executed with `node . "some string"`. Standard output will be checked for an integer representing the byte-length of the string passed in. Your code will be checked to ensure that the C++ code is returning the lenght of the string.
+Your submission will be compiled using `node-gyp rebuild` and executed with `node . "some string"`. Standard output will be checked for an integer representing the byte-length of the string passed in. Your code will be checked to ensure that the C++ code is returning the length of the string.
 
 {cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 
