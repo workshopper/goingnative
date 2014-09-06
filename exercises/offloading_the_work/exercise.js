@@ -138,7 +138,7 @@ function checkExec (mode, callback) {
 
     var delay = Date.now() - start
 
-    if (delay < 100 || delay > 300) {
+    if (delay < 100 || delay > 500) {
       exercise.emit('fail', 'Slept for the right amount of time (asked for 111ms, slept for ' + delay + ')')
       return callback(null, false)
     }
@@ -150,7 +150,7 @@ function checkExec (mode, callback) {
 
       delay = Date.now() - start
 
-      if (delay < 1000 || delay > 1300) {
+      if (delay < 1000 || delay > 1500) {
         exercise.emit('fail', 'Slept for the right amount of time (asked for 1111ms, slept for ' + delay + 'ms)')
         return callback(null, false)
       }
