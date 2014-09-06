@@ -8,7 +8,7 @@ Prepare a *package.json* and a *binding.gyp* for a native add-on package.
 
 ## Description
 
-Some components of a Node.js native add-on has been created for you in a directory named ***{boilerplate:myaddon}*** in your current working directory.
+Some components of a Node.js native add-on have been created for you in a directory named ***{boilerplate:myaddon}*** in your current working directory.
 
 We are starting with the configuration files and will add the other components in the next two exercises.
 
@@ -25,7 +25,7 @@ Your mission: tell node to look for your _.gyp_ file. To do this, add `"gypfile"
 
 ### Mission: finish *binding.gyp*
 
-_binding.gyp_ is a JSON-esq file that tells `node-gyp` how to build your project. Look inside it now. A basic structure has provided for you, but it needs more work.
+_binding.gyp_ is a JSON-esq file that tells `node-gyp` how to build your project. Look inside it now. A basic structure has been provided for you, but it needs more work.
 
 
 * `"target_name"` of the single target listed in the file must be the exact name of your add-on. It needs to match the name you use for it in your JavaScript file *and* the name you use in the `NODE_MODULE()` macro in your C++ file. *Set it to `"myaddon"`*.
