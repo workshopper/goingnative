@@ -16,7 +16,7 @@ node-bindings is a simple project that makes native Node.js add-on *loading* sim
 
 GYP is *"Generate Your Project"* and is a build tool written by Google for the Chromium project. It is intended to be something of a successor to tools like autoconf. It takes a high-level project configuration and generates build files (Makefiles) to match that configuration for your current system.
 
-node-gyp exists because Node.js itself switched to GYP in version 0.8 and so did the the default compile configuration for native add-ons. Now it's the only (sane) way to build you projects. node-gyp wraps GYP and combines your project's binding.gyp with a standard Node.js GYP configuration and creates a suitable build set-up for compiling native add-ons.
+node-gyp exists because Node.js itself switched to GYP in version 0.8 and so did the the default compile configuration for native add-ons. Now it's the only (sane) way to build your projects. node-gyp wraps GYP and combines your project's binding.gyp with a standard Node.js GYP configuration and creates a suitable build set-up for compiling native add-ons.
 
 
 ## About binding.gyp
