@@ -122,7 +122,7 @@ function checkExec (mode, callback) {
       return callback(err)
 
     if (!pass) {
-      exercise.emit('fail', 'JavaScript code loads addon, invokes `delay(x, cb)` method and sleeps for x seconds')
+      exercise.emit('fail', 'JavaScript code loads addon, invokes `delay(x, cb)` method and sleeps for x milliseconds')
       return callback(null, false)
     }
 
@@ -146,7 +146,7 @@ function checkExec (mode, callback) {
       }
 
       exercise.emit(pass ? 'pass' : 'fail'
-        , 'JavaScript code loads addon, invokes `delay(x, cb)` method and sleeps for x seconds')
+        , 'JavaScript code loads addon, invokes `delay(x, cb)` method and sleeps for x milliseconds')
       callback(null, pass)
     })
   })
