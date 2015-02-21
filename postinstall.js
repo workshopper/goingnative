@@ -11,11 +11,11 @@ const tmpl    = path.join(__dirname, 'exercises/am_i_ready/problem.md.tmpl')
     , problem = fs.readFileSync(tmpl, 'utf-8')
 
 
-getos(function (err, distro) {
+getos(function (err, os) {
   if (err)
     throw err
 
-  var markdown = varstring(problem, instructions[distro] || instructions.Other)
+  var markdown = varstring(problem, instructions[os.dist] || instructions.Other)
 
   fs.writeFileSync(out, markdown, 'utf8')
 })
