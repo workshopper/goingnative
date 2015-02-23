@@ -87,7 +87,7 @@ function checkNode (pass, callback) {
     return callback(null, false)
  }
 
- if (!semver.satisfies(process.versions.node, '~' + MIN_NODE_VERSION)) {
+ if (semver.gt(process.versions.node, MAX_NODE_VERSION)) {
     exercise.emit('fail',
           '`'
         + chalk.bold('node')
@@ -100,6 +100,9 @@ function checkNode (pass, callback) {
     )
     return callback(null, false)
   }
+
+  exercise.emit('pass', 'Found usable `' + chalk.bold('node') + '` version: '
+        + chalk.bold('v' + process.versions.node))
 
   callback(null, true)
 }
