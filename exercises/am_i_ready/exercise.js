@@ -131,7 +131,7 @@ function checkGcc (pass, callback) {
             + chalk.bold('v' + MIN_GCC_VERSION)
         )
       }
-    } else if (versionMatch = stderr.toString().match(/Apple LLVM version (\d+\.\d+) /)) {
+    } else if (versionMatch = stderr.toString().match(/Apple LLVM version (\d+\.\d+)/)) {
       versionString = versionMatch && versionMatch[1] + '.0'
 
       if (!semver.satisfies(versionString, '>=' + MIN_LLVM_VERSION)) {
