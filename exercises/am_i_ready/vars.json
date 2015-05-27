@@ -29,6 +29,10 @@
       "gcc" : "Visit <https://developer.apple.com/xcode/downloads/>.",
       "python" : "Visit <https://www.python.org/download/mac>."
     },
+    "win32" : {
+      "gcc" : "On **Windows**, you should install Visual Studio Community Edition 2013 http://go.microsoft.com/fwlink/?LinkId=517284.",
+      "python" : "Python must be in your PATH: on Mac and Linux this should be handled by default. On **Windows 8**, you should search 'environment' from the search menu, and click 'edit environment variable for your account', then you should edit 'PATH', and add ';C:\\Python27'. On **Windows 7**, you can access a similar menu at My Computer > Properties > Advanced System Settings > Environment Variables'."
+    },
     "Other" : {
       "gcc" : "Use your native package manager to install build tools including gcc.",
       "python" : "Download from <https://www.python.org/download/releases/2.7.7> or use your package manager."
