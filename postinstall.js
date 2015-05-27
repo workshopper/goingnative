@@ -15,7 +15,8 @@ getos(function (err, os) {
   if (err)
     throw err
 
-  var markdown = varstring(problem, instructions[os.dist] || instructions.Other)
+  var lookup = os.dist ? os.dist : os.os
+  var markdown = varstring(problem, instructions[lookup] || instructions.Other)
 
   fs.writeFileSync(out, markdown, 'utf8')
 })

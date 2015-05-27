@@ -6,6 +6,6 @@
   "scripts": {
     "install": "node-gyp rebuild"
   },
-  "license": "MIT"
-  ,"gypfile":true
+  "license": "MIT",
+  "gypfile":true
 }
