@@ -5,10 +5,10 @@
 
 using namespace v8;
 
-class MyWorker : public NanAsyncWorker {
+class MyWorker : public Nan::AsyncWorker {
  public:
-  MyWorker(NanCallback *callback, int delay)
-    : NanAsyncWorker(callback), delay(delay) {}
+  MyWorker(Nan::Callback *callback, int delay)
+    : Nan::AsyncWorker(callback), delay(delay) {}
   ~MyWorker() {}
 
   // Executed inside the worker-thread.
@@ -40,7 +40,7 @@ class MyWorker : public NanAsyncWorker {
   // this function will be run inside the main event loop
   // so it is safe to use V8 again
   void HandleOKCallback () {
-    NanScope();
+    Nan::HandleScope scope;
 
     callback->Call(0, NULL);
   }
@@ -50,26 +50,35 @@ class MyWorker : public NanAsyncWorker {
 };
 
 NAN_METHOD(Delay) {
-  NanScope();
+  Nan::Maybe<int> maybeDelay = Nan::To<int>(info[0]);
+  Nan::MaybeLocal<Function> maybeCallback = Nan::To<Function>(info[1]);
 
-  int delay = args[0].As<Number>()->IntegerValue();
-  Local<Function> callback = args[1].As<Function>();
+  if(maybeDelay.IsNothing() == true) {
+    Nan::ThrowError("Error converting first argument to integer");
+  }
+
+  int delay = maybeDelay.FromJust();
+
+  Nan::Local<Function> callback;
+
+  if(maybeCallback.ToLocal(&callback) == false) {
+    Nan::ThrowError("Error converting second argument to function");
+  }
 
   printf("FAUX 1\n");
   fflush(stdout);
 
-  NanCallback* nanCallback = new NanCallback(callback);
+  Nan::Callback* nanCallback = new Nan::Callback(callback);
   MyWorker* worker = new MyWorker(nanCallback, delay);
-  NanAsyncQueueWorker(worker);
+  Nan::AsyncQueueWorker(worker);
 
   printf("FAUX 2\n");
   fflush(stdout);
-
-  NanReturnUndefined();
 }
 
-void Init(Handle<Object> exports) {
-  exports->Set(NanNew("delay"), NanNew<FunctionTemplate>(Delay)->GetFunction());
+NAN_MODULE_INIT(Init) {
+  Nan::Set(target, Nan::New("delay").ToLocalChecked(),
+      Nan::GetFunction(Nan::New<FunctionTemplate>(Delay)).ToLocalChecked());
 }
 
 NODE_MODULE(myaddon, Init)

@@ -28,17 +28,17 @@ C++ doesn't have automatic garbage collection, but JavaScript does. V8 tries to 
 
 It's not a fully automatic process unfortunately. To replicate the concept of function scoping of variables, V8 introduces a `HandleScope`. When you declare a `HandleScope` at the top of a C++ function, all V8 objects *created* within that function will be *attached* to that scope in the same way that a `function` in JavaScript will capture new variables declared within it.
 
-To declare one of these scopes in your code, use the NAN `NanScope()` call at the top of your function. When your function ends, the scope can then pass on the objects to the garbage collector if they have not been passed outside of the scope.
+To declare one of these scopes in your code, use `Nan::HandleScope scope;` call at the top of your function. When your function ends, the scope can then pass on the objects to the garbage collector if they have not been passed outside of the scope.
 
-We then need to create a new V8 object representing our string length to pass back in to JavaScript. To create a new V8 type, use `NanNew<Type>(value)`, where `Type` is the V8 type (such as `Number` or `String`) and `value` is the initial C++ value compatible with that type. A `"string"` can be passed to `NanNew<String>()` and a number value can be passed to a `NanNew<Number>(101)`. If you want to assign the result to a variable, then use a construct such as:
+We then need to create a new V8 object representing our string length to pass back in to JavaScript. To create a new V8 type, use `Nan::New<Type>(value)`, where `Type` is the V8 type (such as `Number` or `String`) and `value` is the initial C++ value compatible with that type. A `"string"` can be passed to `Nan::New<String>()` and a number value can be passed to a `Nan::New<Number>(101)`. If you want to assign the result to a variable, then use a construct such as:
 
 ```c++
-Local<String> str = NanNew<String>("a string");
+Local<String> str = Nan::New<String>("a string");
 ```
 
 *Hint: you want to create a `Number` handle, not a `String`.*
 
-In the previous exercise, we returned `undefined` from our function with the NAN helper `NanReturnUndefined()`.  This time, as we are returning a value, we want to pass that value to `NanReturnValue()`.
+In the previous exercise, we returned `undefined` from our function by just returning.  This time, as we are returning a value, we want to pass that value to `info.GetReturnValue().Set(value);`.
 
 {cyan}──────────────────────────────────────────────────────────────────────{/cyan}
 

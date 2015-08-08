@@ -6,7 +6,7 @@ NAN_METHOD(Print) {
 
 }
 
-void Init(Handle<Object> exports) {
-  exports->Set(NanNew("print"), NanNew<FunctionTemplate>(Print)->GetFunction());
+NAN_MODULE_INIT(Init) {
+  Nan::Set(target, Nan::New("print").ToLocalChecked(),
+      Nan::GetFunction(Nan::New<FunctionTemplate>(Print)).ToLocalChecked());
 }
-
