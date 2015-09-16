@@ -18,6 +18,7 @@ $ goingnative
 * [Will Blankenship](https://github.com/wblankenship)
 * [Benjamin Byholm](https://github.com/kkoopa)
 * [Trevor Norris](https://github.com/trevnorris)
+* [Adam Brady](https://github.com/someoneweird)
 
 ## License
 
