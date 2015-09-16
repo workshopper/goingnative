@@ -48,35 +48,32 @@ Remember to add an explicit new-line character at the end: `\n`.
 
 ### Mission: return a value
 
-Finally, you must return a value from your JavaScript-exposed method, even if all you return is `undefined`. NAN includes several helper functions to cover common cases. Here you want NAN's undefined helper: `NanReturnUndefined()`.
-
-
-*Add `NanReturnUndefined()` at the bottom of your function.
-
+If you need to return a value from your function, you can do so by passing a variable to `info.GetReturnValue().Set()`
 
 ### Mission: export `Print` to JavaScript
 
 Now we export this method to JavaScript! Copy and paste this line:
 
 ```cpp
-void Init(Handle<Object> exports) {
-  exports->Set(NanNew("print"), NanNew<FunctionTemplate>(Print)->GetFunction());
+NAN_MODULE_INIT(Init) {
+  Nan::Set(target, Nan::New("print").ToLocalChecked(),
+      Nan::GetFunction(Nan::New<FunctionTemplate>(Print)).ToLocalChecked());
 }
 ```
 
 Take a deep breath! This line is secretly the equivalent of `module.exports.print = Print` in JavaScript. Let's step through it.
 
 
-* `void Init(Handle<Object> exports) { .. }` defines a function that receives an `exports` object from V8. This is the same object you would receive in a JavaScript module as `module.exports` but it's now exposed as a C++ type.
-* `NanNew()` creates a new V8 object, in this case a `String`. This object is used as the property name of the `exports` object.
-* `NanNew<FunctionTemplate>(Print)->GetFunction()` is how we get a reference to the method we declared earlier so that we can expose it to JavaScript.
+* `NAN_MODULE_INIT(Init) { .. }` defines a function that receives a `target` object from V8. This is the same object you would receive in a JavaScript module as `module.exports` but it's now exposed as a C++ type.
+* `Nan::New()` creates a new V8 object, in this case a `String`. This object is used as the property name of the `exports` object.
+* `Nan::GetFunction(Nan::New<FunctionTemplate>(Print)).ToLocalChecked())` is how we get a reference to the method we declared earlier so that we can expose it to JavaScript.
 
 
 Notice how we are declaring `print` as an idiomatic JavaScript lower-case name while `Print` is idiomatic C++ title-case. Get used to the verbosity; this is C++ after all!
 
 ### Mission: expose the init function to Node.js.
 
-The `Init()` function needs to be given to Node.js because it's the entry-point to the module. Node.js is responsible for passing in the `exports` object. Exposing it to Node.js requires a native Node.js *macro* that does the heavy-lifting of registering your initialization function:
+The `NAN_MODULE_INIT(Init)` function needs to be given to Node.js because it's the entry-point to the module. Node.js is responsible for passing in the `exports` object. Exposing it to Node.js requires a native Node.js *macro* that does the heavy-lifting of registering your initialization function:
 
 ```c++
 NODE_MODULE(modulename, InitFunction)

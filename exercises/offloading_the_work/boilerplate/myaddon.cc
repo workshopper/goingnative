@@ -6,11 +6,11 @@ using namespace v8;
 // class, a simple encapsulation of worker-thread
 // logic to make simple tasks easier
 
-class MyWorker : public NanAsyncWorker {
+class MyWorker : public Nan::AsyncWorker {
  public:
   // Constructor
-  MyWorker(NanCallback *callback, int delay)
-    : NanAsyncWorker(callback), delay(delay) {}
+  MyWorker(Nan::Callback *callback, int delay)
+    : Nan::AsyncWorker(callback), delay(delay) {}
   // Destructor
   ~MyWorker() {}
 
@@ -26,9 +26,9 @@ class MyWorker : public NanAsyncWorker {
   // this function will be run inside the main event loop
   // so it is safe to use V8 again
   void HandleOKCallback () {
-    NanScope();
+    Nan::HandleScope scope;
 
-    // NanCallback#Call() does a NanMakeCallback() for us
+    // Nan::Callback#Call() does a Nan::MakeCallback() for us
     callback->Call(0, NULL);
   }
 
@@ -37,18 +37,15 @@ class MyWorker : public NanAsyncWorker {
 };
 
 NAN_METHOD(Delay) {
-  NanScope();
-
   // get delay and callback
   // create NanCallback instance wrapping the callback
   // create a MyWorker instance, passing the callback and delay
   // queue the worker instance onto the thread-pool
-
-  NanReturnUndefined();
 }
 
-void Init(Handle<Object> exports) {
-  exports->Set(NanNew("delay"), NanNew<FunctionTemplate>(Delay)->GetFunction());
+NAN_MODULE_INIT(Init) {
+  Nan::Set(target, Nan::New("delay").ToLocalChecked(),
+      Nan::GetFunction(Nan::New<FunctionTemplate>(Delay)).ToLocalChecked());
 }
 
 NODE_MODULE(myaddon, Init)

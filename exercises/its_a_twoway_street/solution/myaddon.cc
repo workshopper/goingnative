@@ -3,16 +3,21 @@
 using namespace v8;
 
 NAN_METHOD(Length) {
-  NanScope();
+  Nan::MaybeLocal<String> maybeStr = Nan::To<String>(info[0]);
+  Nan::Local<String> str;
 
-  int len = strlen(*String::Utf8Value(args[0].As<String>()));
-  Local<Number> v8len = NanNew(len);
+  if(maybeStr.ToLocal(&str) == false) {
+    Nan::ThrowError("Error converting first argument to string");
+  }
 
-  NanReturnValue(v8len);
+  int len = strlen(*String::Utf8Value(str));
+
+  info.GetReturnValue().Set(len);
 }
 
-void Init(Handle<Object> exports) {
-  exports->Set(NanNew("length"), NanNew<FunctionTemplate>(Length)->GetFunction());
+NAN_MODULE_INIT(Init) {
+  Nan::Set(target, Nan::New("length").ToLocalChecked(),
+      Nan::GetFunction(Nan::New<FunctionTemplate>(Delay)).ToLocalChecked());
 }
 
 NODE_MODULE(myaddon, Init)

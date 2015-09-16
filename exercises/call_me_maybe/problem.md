@@ -39,12 +39,12 @@ usleep(x * 1000);
 #endif
 ```
 
-3. Use `NanMakeCallback()` to call the callback function, which will be of type `Function`. Recall that to convert to a `Local<Function>` you can use `args[1].As<Function>()`. V8 `Function` objects have a `Call()` method on them that you can use. `NanMakeCallback()` improves on this by wiring up domains and other debugging support, so that's what we'll use here.
+3. Use `Nan::MakeCallback()` to call the callback function, which will be of type `Function`. Recall that to convert to a `Local<Function>` you can use `info[1].As<Function>()`. V8 `Function` objects have a `Call()` method on them that you can use. `Nan::MakeCallback()` improves on this by wiring up domains and other debugging support, so that's what we'll use here.
 
-Use `NanMakeCallback()`` like this:
+Use `Nan::MakeCallback()`` like this:
 
 ```c++
-NanMakeCallback(NanGetCurrentContext()->Global(), callback, 0, NULL);
+Nan::MakeCallback(Nan::GetCurrentContext()->Global(), callback, 0, NULL);
 ```
 
 The first argument specifies what to use as `this` in JavaScript. Here it's just be `global`. The second argument is the function you wish to use as a callback. The third argument is the number of arguments to apply to the function. The fourth argument is an array of `Local<Value>` handles that supply the arguments. In this case, we're not passing any arguments to the callback, so we specify `0` arguments and a `NULL` array.

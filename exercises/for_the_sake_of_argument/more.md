@@ -13,7 +13,7 @@ To explore the documentation about the various V8 types, visit https://v8docs.no
 The `Local<Type>` construct is required to wrap up the raw type object in a *handle* that can safely interact with the V8 runtime. The handle is used to attach to the garbage collector and automatically clean up the object when we fall out of *scope*. We can also use the handle to perform conversions and comparisons. In general we only interact with V8 data types when they are wrapped in a handle.
 
 ```c++
-Local<Object> arg1 = args[0];
+Local<Object> arg1 = info[0];
 Local<String> str1 = arg1.As<String>();
 ```
 

@@ -35,22 +35,22 @@ Node.js spins up 4 worker threads (by default) in a thread-pool for handling fil
 
 Thankfully NAN makes this a little easier than it otherwise would be to achieve.
 
-We have also given you a new file {boilerplate:myaddon.cc} in your current working directory that has a basic structure you can use. It defines a `MyWorker` C++ *class* that extends the `NanAsyncWorker` class that NAN uses to define a discrete chunk of asynchronous work.
+We have also given you a new file {boilerplate:myaddon.cc} in your current working directory that has a basic structure you can use. It defines a `MyWorker` C++ *class* that extends the `Nan::AsyncWorker` class that NAN uses to define a discrete chunk of asynchronous work.
 
-To use your worker class, wrap up a standard V8 `Local<Function>` in a `NanCallback` object. This protects the callback from garbage collection and exposes a simple `Call()` method that replaces the need to use `NanMakeCallback()`.
+To use your worker class, wrap up a standard V8 `Local<Function>` in a `Nan::Callback` object. This protects the callback from garbage collection and exposes a simple `Call()` method that replaces the need to use `Nan::MakeCallback()`.
 
-To use `MyWorker` and `NanCallback` you need to allocate memory on the *"heap"* for them by using the `new` operator. NAN will perform clean-up of both objects for you so you don't need a matching `delete` in this case as you normally would in C++.
+To use `MyWorker` and `Nan::Callback` you need to allocate memory on the *"heap"* for them by using the `new` operator. NAN will perform clean-up of both objects for you so you don't need a matching `delete` in this case as you normally would in C++.
 
 Things you need to do:
 
 
-1. Wrap your `Local<Function>` in a `NanCallback` with: `NanCallback* nanCallback = new NanCallback(callback);`
+1. Wrap your `Local<Function>` in a `Nan::Callback` with: `Nan::Callback* nanCallback = new Nan::Callback(callback);`
 
 
 2. Create a `MyWorker` and pass it the `nanCallback` and your amount of timer `delay` with `MyWorker* worker = new MyWorker(nanCallback, delay);`
 
 
-3. Submit `worker` to the thread-pool with `NanAsyncQueueWorker(worker);` After this you can return as normal and the asynchronous work will be performed when there is a spare thread for it.
+3. Submit `worker` to the thread-pool with `Nan::AsyncQueueWorker(worker);` After this you can return as normal and the asynchronous work will be performed when there is a spare thread for it.
 
 
 4. Put your `usleep()` / `Sleep()` logic into the `MyWorker`s `Execute()` method.

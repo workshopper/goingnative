@@ -6,10 +6,20 @@
 using namespace v8;
 
 NAN_METHOD(Delay) {
-  NanScope();
+  Nan::Maybe<int> maybeDelay = Nan::To<int>(info[0]);
+  Nan::MaybeLocal<Function> maybeCallback = Nan::To<Function>(info[1]);
 
-  int delay = args[0].As<Number>()->IntegerValue();
-  Local<Function> callback = args[1].As<Function>();
+  if(maybeDelay.IsNothing() == true) {
+    Nan::ThrowError("Error converting first argument to integer");
+  }
+
+  int delay = maybeDelay.FromJust();
+
+  Nan::Local<Function> callback;
+
+  if(maybeCallback.ToLocal(&callback) == false) {
+    Nan::ThrowError("Error converting second argument to function");
+  }
 
   #ifdef _WIN32
    Sleep(delay);
@@ -17,13 +27,12 @@ NAN_METHOD(Delay) {
    usleep(delay * 1000);
   #endif
 
-  NanMakeCallback(NanGetCurrentContext()->Global(), callback, 0, NULL);
-
-  NanReturnUndefined();
+  Nan::MakeCallback(Nan::GetCurrentContext()->Global(), callback, 0, NULL);
 }
 
-void Init(Handle<Object> exports) {
-  exports->Set(NanNew("delay"), NanNew<FunctionTemplate>(Delay)->GetFunction());
+NAN_MODULE_INIT(Init) {
+  Nan::Set(target, Nan::New("delay").ToLocalChecked(),
+      Nan::GetFunction(Nan::New<FunctionTemplate>(Delay)).ToLocalChecked());
 }
 
 NODE_MODULE(myaddon, Init)

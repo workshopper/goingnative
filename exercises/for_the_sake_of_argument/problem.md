@@ -19,12 +19,15 @@ Feature #2 is a C++ change. To implement it, you'll need to learn about argument
 
 ### I wanted an argument!
 
-When you use the macro `NAN_METHOD()`, you automatically have access to an `args` array inside the method even though you don't see it declared. The elements of this array correspond to the arguments passed in, so `args[0]` is the first argument.
+When you use the macro `NAN_METHOD()`, you automatically have access to an `info` array inside the method even though you don't see it declared. The elements of this array correspond to the arguments passed in, so `info[0]` is the first argument.
 
-Each element in the array is an object is a V8 type with a special function `As<Type>()` allowing you to *cast* it to a different V8 type. e.g. to use a `v8::Number` type as the 3rd argument in your method, write:
+NAN contains a special function `To<T>()` that lets you *convert* a `v8::Value` to another `V8` type. This value returns either a `MaybeLocal<T>` or `Maybe<T>` - this is because some values cannot be converted to other types. You must check if the response value is empty before using `::IsEmpty()`, like so:
 
 ```c++
-Local<Number> num = args[2].As<Number>();
+Nan::MaybeLocal<Number> maybeNum = Nan::To<Number>(info[2]);
+if(maybeNum.IsEmpty() == false) {
+  Local<Number> num = maybeNum.ToLocalChecked();
+}
 ```
 
 ### Handles
