@@ -4,7 +4,7 @@ using namespace v8;
 
 NAN_METHOD(Length) {
   Nan::MaybeLocal<String> maybeStr = Nan::To<String>(info[0]);
-  Nan::Local<String> str;
+  v8::Local<String> str;
 
   if(maybeStr.ToLocal(&str) == false) {
     Nan::ThrowError("Error converting first argument to string");

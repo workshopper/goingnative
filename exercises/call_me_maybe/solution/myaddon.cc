@@ -15,7 +15,7 @@ NAN_METHOD(Delay) {
 
   int delay = maybeDelay.FromJust();
 
-  Nan::Local<Function> callback;
+  v8::Local<Function> callback;
 
   if(maybeCallback.ToLocal(&callback) == false) {
     Nan::ThrowError("Error converting second argument to function");
