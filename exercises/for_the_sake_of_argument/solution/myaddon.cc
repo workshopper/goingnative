@@ -5,7 +5,7 @@ using namespace v8;
 NAN_METHOD(Print) {
   Nan::MaybeLocal<String> maybeStr = Nan::To<String>(info[0]);
   v8::Local<String> str;
-  if(maybeStr.ToLocal(&str)) {
+  if(maybeStr.ToLocal(&str) == false) {
     Nan::ThrowError("Error converting first argument to string");
   }
   printf("%s\n", *String::Utf8Value(str));

@@ -17,7 +17,7 @@ NAN_METHOD(Length) {
 
 NAN_MODULE_INIT(Init) {
   Nan::Set(target, Nan::New("length").ToLocalChecked(),
-      Nan::GetFunction(Nan::New<FunctionTemplate>(Delay)).ToLocalChecked());
+      Nan::GetFunction(Nan::New<FunctionTemplate>(Length)).ToLocalChecked());
 }
 
 NODE_MODULE(myaddon, Init)
