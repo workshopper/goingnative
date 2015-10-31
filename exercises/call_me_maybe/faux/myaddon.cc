@@ -7,7 +7,6 @@ using namespace v8;
 
 NAN_METHOD(Delay) {
   Nan::Maybe<int> maybeDelay = Nan::To<int>(info[0]);
-  Nan::MaybeLocal<Function> maybeCallback = Nan::To<Function>(info[1]);
 
   if(maybeDelay.IsNothing() == true) {
     Nan::ThrowError("Error converting first argument to integer");
@@ -15,9 +14,7 @@ NAN_METHOD(Delay) {
 
   int delay = maybeDelay.FromJust();
 
-  v8::Local<Function> callback;
-
-  if(maybeCallback.ToLocal(&callback) == false) {
+  if(info[1]->IsFunction() == false) {
     Nan::ThrowError("Error converting second argument to function");
   }
 
@@ -30,6 +27,7 @@ NAN_METHOD(Delay) {
    usleep(delay * 1000);
   #endif
 
+  v8::Local<Function> callback = info[1].As<Function>();
   Nan::MakeCallback(Nan::GetCurrentContext()->Global(), callback, 0, NULL);
 }
 
