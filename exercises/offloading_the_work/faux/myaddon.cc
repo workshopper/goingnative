@@ -51,19 +51,18 @@ class MyWorker : public Nan::AsyncWorker {
 
 NAN_METHOD(Delay) {
   Nan::Maybe<int> maybeDelay = Nan::To<int>(info[0]);
-  Nan::MaybeLocal<Function> maybeCallback = Nan::To<Function>(info[1]);
 
   if(maybeDelay.IsNothing() == true) {
     Nan::ThrowError("Error converting first argument to integer");
   }
 
+  if (info[1]->IsFunction() == false) {
+    Nan::ThrowError("Error converting second argument to Function");
+  }
+
   int delay = maybeDelay.FromJust();
 
-  v8::Local<Function> callback;
-
-  if(maybeCallback.ToLocal(&callback) == false) {
-    Nan::ThrowError("Error converting second argument to function");
-  }
+  v8::Local<Function> callback = info[1].As<Function>();
 
   printf("FAUX 1\n");
   fflush(stdout);
