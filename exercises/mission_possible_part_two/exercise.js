@@ -31,7 +31,7 @@ exercise.addCleanup(copy.cleanup([ copyFauxTempDir ]))
 
 
 function copyFauxAddon (mode, callback) {
-  copy(path.join(__dirname, 'faux', 'myaddon.cc'), copyFauxTempDir, function (err) {
+  copy(path.join(__dirname, 'faux', 'myaddon.cc'), copyFauxTempDir, { overwrite: true }, function (err) {
     if (err)
       return callback(err)
 
@@ -78,7 +78,6 @@ function checkJs (mode, callback) {
             process.stdout.write(stdout)
           }
           exercise.emit(pass ? 'pass' : 'fail', 'JavaScript code loads addon and invokes `print()` method')
-
           callback(null, pass)
         }
     )

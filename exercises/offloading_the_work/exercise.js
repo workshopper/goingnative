@@ -43,7 +43,7 @@ exercise.addCleanup(copy.cleanup([ copyTempDir, copyFauxTempDir ]))
 
 
 function copyFauxAddon (mode, callback) {
-  copy(path.join(__dirname, 'faux', 'myaddon.cc'), copyFauxTempDir, function (err) {
+  copy(path.join(__dirname, 'faux', 'myaddon.cc'), copyFauxTempDir, { overwrite: true }, function (err) {
     if (err)
       return callback(err)
 
@@ -86,7 +86,7 @@ function execWith (dir, arg, expect, callback) {
 // is no cheating! (e.g. console.log(...))
 function checkJs (mode, callback) {
   var exercise = this
-    , expect   = /FAUX 1\nFAUX 2\nWaiting\.*FAUX 3\n\.\.*FAUX 4\nDone!\n/m
+    , expect   = /FAUX 1\nFAUX 2\nWaiting\.*FAUX 3\n\.+FAUX 4\n\.*Done!\n/m
 
   if (!exercise.passed)
     return callback(null, true) // shortcut if we've already had a failure
@@ -100,6 +100,7 @@ function checkJs (mode, callback) {
     execWith(copyFauxTempDir, 111, expect, function (err, pass) {
       if (err)
         return callback(err)
+
       if (!pass) {
         exercise.emit('fail', 'JavaScript code loads addon and invokes `delay(x, cb)` method')
         return callback(null, false)
@@ -138,8 +139,8 @@ function checkExec (mode, callback) {
 
     var delay = Date.now() - start
 
-    if (delay < 100 || delay > 500) {
-      exercise.emit('fail', 'Slept for the right amount of time (asked for 111ms, slept for ' + delay + ')')
+    if (delay < 100 || delay > 600) {
+      exercise.emit('fail', 'Slept for the right amount of time (asked for 111ms, slept for ' + delay + 'ms)')
       return callback(null, false)
     }
 

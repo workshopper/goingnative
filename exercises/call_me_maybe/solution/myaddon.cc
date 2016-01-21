@@ -8,13 +8,13 @@ using namespace v8;
 NAN_METHOD(Delay) {
   Nan::Maybe<int> maybeDelay = Nan::To<int>(info[0]);
 
-  if(maybeDelay.IsNothing() == true) {
+  if (maybeDelay.IsNothing() == true) {
     Nan::ThrowError("Error converting first argument to integer");
   }
 
   int delay = maybeDelay.FromJust();
 
-  if(info[1]->IsFunction() == false) {
+  if (info[1]->IsFunction() == false) {
     Nan::ThrowError("Error converting second argument to function");
   }
 

@@ -37,7 +37,7 @@ exercise.addCleanup(copy.cleanup([ copyTempDir, copyFauxTempDir ]))
 
 
 function copyFauxAddon (mode, callback) {
-  copy(path.join(__dirname, 'solution', 'myaddon.cc'), copyFauxTempDir, function (err) {
+  copy(path.join(__dirname, 'solution', 'myaddon.cc'), copyFauxTempDir, { overwrite: true }, function (err) {
     if (err)
       return callback(err)
 

@@ -35,7 +35,7 @@ exercise.addCleanup(cleanup)
 
 // copy test package to a temporary location, populate it with bindings and nan
 function setup (mode, callback) {
-  copy(testPackageSrc, testPackageRnd, function (err) {
+  copy(testPackageSrc, testPackageRnd, { overwrite: true }, function (err) {
     if (err)
       return callback(err)
 

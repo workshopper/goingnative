@@ -18,9 +18,9 @@ class MyWorker : public Nan::AsyncWorker {
   void Execute () {
     // tiny sleep prior to ensure proper print order of 2 & 3
     #ifdef _WIN32
-     Sleep(10);
+     Sleep(50);
     #else
-     usleep(10000);
+     usleep(50 * 1000);
     #endif
 
     printf("FAUX 3\n");
@@ -52,7 +52,7 @@ class MyWorker : public Nan::AsyncWorker {
 NAN_METHOD(Delay) {
   Nan::Maybe<int> maybeDelay = Nan::To<int>(info[0]);
 
-  if(maybeDelay.IsNothing() == true) {
+  if (maybeDelay.IsNothing() == true) {
     Nan::ThrowError("Error converting first argument to integer");
   }
 

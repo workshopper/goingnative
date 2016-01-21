@@ -25,7 +25,7 @@ NAN contains a special function `To<T>()` that lets you *convert* a `v8::Value` 
 
 ```c++
 Nan::MaybeLocal<Number> maybeNum = Nan::To<Number>(info[2]);
-if(maybeNum.IsEmpty() == false) {
+if (maybeNum.IsEmpty() == false) {
   Local<Number> num = maybeNum.ToLocalChecked();
 }
 ```
