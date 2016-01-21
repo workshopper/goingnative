@@ -1,6 +1,6 @@
 {
   "name": "goingnative",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "A NodeSchool style workshopper for learning how to write native Node.js addons",
   "main": "goingnative.js",
   "bin": "./goingnative.js",
