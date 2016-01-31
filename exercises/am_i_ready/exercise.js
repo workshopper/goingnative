@@ -87,7 +87,7 @@ function checkNode (pass, callback) {
     return callback(null, false)
  }
 
- if (semver.gt(process.versions.node, MAX_NODE_VERSION)) {
+ if (!semver.satisfies(process.versions.node, '<=' + MAX_NODE_VERSION)) {
     exercise.emit('fail',
           '`'
         + chalk.bold('node')
