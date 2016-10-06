@@ -160,7 +160,7 @@ function checkGcc (pass, callback) {
 
 function checkMsvc (pass, callback) {
   var msvsVars    = {
-        2015: 'VSSDK140Install'
+        2015: 'VS140COMNTOOLS'
         , 2013: 'VS130COMNTOOLS'
         , 2012: 'VS120COMNTOOLS'
         , 2011: 'VS110COMNTOOLS'
@@ -178,7 +178,7 @@ function checkMsvc (pass, callback) {
     return callback(null, false)
   }
 
-  if (!fs.existsSync(path.join((process.env[msvsVars[msvsVersion]]).replace('VSSDK', 'Common7\\Tools'), 'vsvars32.bat'))) {
+  if (!fs.existsSync(path.join((process.env[msvsVars[msvsVersion]]), 'vsvars32.bat'))) {
     exercise.emit('fail',
         'Check for '
       + chalk.bold('Microsoft Visual Studio')
