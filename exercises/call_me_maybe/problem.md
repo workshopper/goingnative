@@ -17,7 +17,6 @@ You can reuse your previous submission but you need to adjust it in two places.
 The delay function needs to do the following:
 
 1. Receive a `Number` in the first argument to the method and convert it to a C++ `int` value. First, convert the argument to a `Nan::Maybe<int>` by using the converter `Nan::To<int>(info[0])`. Now you have a convertable native 64-bit (if you need) `int` value from a `Number` _if it has been passed_. Check if it's been passed appropriately by checking the `Maybe` with `IsNothing()`, then if you have a value you can finally get a proper `int` using `FromJust()` on it.
-
 2. Make a **sleep** happen. Unfortunately you achieve this differently in C++ depending on your platform, and what's more, you *should* write your native add-ons to be cross-platform compatible. On Windows, you call the built-in function `Sleep(time)` (where `time` is in milliseconds). On "POSIX-compliant" systems like Linux and OS X, you call `usleep(time)` (where `time` is in **microseconds**). To call `usleep()`, you must `#include` the *unistd.h* system header.
 
 To make a cross-platform sleep, we can use C++ macros to determine whether we are compiling on Windows or not.
