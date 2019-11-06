@@ -31,7 +31,7 @@
     "rimraf": "~2.5.0",
     "semver": "~5.1.0",
     "varstring": "~0.2.0",
-    "workshopper": "~1.4.1",
+    "workshopper-adventure": "^6.0.4",
     "workshopper-boilerplate": "~1.1.2",
     "workshopper-exercise": "~1.1.0",
     "workshopper-hooray": "~1.1.0",

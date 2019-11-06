@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const workshopper = require('workshopper')
+const Workshopper = require('workshopper-adventure')
     , path        = require('path')
     , credits     = require('./credits')
     , menu        = require('./exercises/menu')
@@ -17,7 +17,7 @@ function fpath (f) {
 }
 
 
-workshopper({
+const workshopper = Workshopper({
     name        : appname
   , title       : title
   , subtitle    : subtitle
@@ -29,7 +29,7 @@ workshopper({
         fs: 'white'
       , bg: 'black'
     }
-  , commands    : [
+  , menuItems: [
       {
           name    : 'credits'
         , handler : credits
@@ -43,3 +43,6 @@ workshopper({
     ]
   , onComplete  : hooray
 })
+
+workshopper.addAll(require('./exercises/menu.json'));
+workshopper.execute(process.argv.slice(2))
