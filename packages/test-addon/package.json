@@ -4,7 +4,7 @@
   "main": "test.js",
   "private": true,
   "dependencies": {
-    "nan": "^2.0.9"
+    "nan": "^2.14.0"
   },
   "scripts": {
     "test": "node test.js"
