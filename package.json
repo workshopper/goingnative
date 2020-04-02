@@ -27,7 +27,7 @@
     "map-async": "~0.1.1",
     "mkdirp": "~0.5.0",
     "nan": "~2.2.0",
-    "node-gyp": "^6.0.1",
+    "node-gyp": "^6.1.0",
     "rimraf": "~2.5.0",
     "semver": "~5.1.0",
     "varstring": "~0.2.0",
