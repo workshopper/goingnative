@@ -10,7 +10,7 @@ NAN_METHOD(Length) {
     Nan::ThrowError("Error converting first argument to string");
   }
 
-  int len = strlen(*String::Utf8Value(str));
+  int len = strlen(*Nan::Utf8String(str));
 
   info.GetReturnValue().Set(len);
 }

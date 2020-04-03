@@ -8,7 +8,7 @@ NAN_METHOD(Print) {
   if (maybeStr.ToLocal(&str) == false) {
     Nan::ThrowError("Error converting first argument to string");
   }
-  printf("%s\n", *String::Utf8Value(str));
+  printf("%s\n", *Nan::Utf8String(str));
 }
 
 NAN_MODULE_INIT(Init) {
