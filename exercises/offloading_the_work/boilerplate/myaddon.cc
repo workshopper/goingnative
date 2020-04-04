@@ -27,9 +27,10 @@ class MyWorker : public Nan::AsyncWorker {
   // so it is safe to use V8 again
   void HandleOKCallback () {
     Nan::HandleScope scope;
+    Nan::AsyncResource resource("Nan::Callback");
 
     // Nan::Callback#Call() does a Nan::MakeCallback() for us
-    callback->Call(0, NULL);
+    callback->Call(0, NULL, &resource);
   }
 
  private:
