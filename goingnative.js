@@ -1,48 +1,46 @@
 #!/usr/bin/env node
 
 const Workshopper = require('workshopper-adventure')
-    , path        = require('path')
-    , credits     = require('./credits')
-    , menu        = require('./exercises/menu')
-    , hooray      = require('workshopper-hooray')
-    , more        = require('workshopper-more')
+const path = require('path')
+const credits = require('./credits')
+const menu = require('./exercises/menu')
+const hooray = require('workshopper-hooray')
+const more = require('workshopper-more')
 
-    , appname     = 'goingnative'
-    , title       = 'Going Native'
-    , subtitle    = '\x1b[23mSelect an exercise and hit \x1b[3mEnter\x1b[23m to begin'
-
+const appname = 'goingnative'
+const title = 'Going Native'
+const subtitle = '\x1b[23mSelect an exercise and hit \x1b[3mEnter\x1b[23m to begin'
 
 function fpath (f) {
   return path.join(__dirname, f)
 }
 
-
 const workshopper = Workshopper({
-    name        : appname
-  , title       : title
-  , subtitle    : subtitle
-  , exerciseDir : fpath('./exercises/')
-  , appDir      : __dirname
-  , helpFile    : fpath('help.txt')
-  , footerFile  : false
-  , menu        : {
-        fs: 'white'
-      , bg: 'black'
+  name: appname,
+  title: title,
+  subtitle: subtitle,
+  exerciseDir: fpath('./exercises/'),
+  appDir: __dirname,
+  helpFile: fpath('help.txt'),
+  footerFile: false,
+  menu: {
+    fs: 'white',
+    bg: 'black'
+  },
+  menuItems: [
+    {
+      name: 'credits',
+      handler: credits
+    },
+    {
+      name: 'more',
+      menu: false,
+      short: 'm',
+      handler: more
     }
-  , menuItems: [
-      {
-          name    : 'credits'
-        , handler : credits
-      }
-    , {
-          name    : 'more'
-        , menu    : false
-        , short   : 'm'
-        , handler : more
-      }
-    ]
-  , onComplete  : hooray
+  ],
+  onComplete: hooray
 })
 
-workshopper.addAll(require('./exercises/menu.json'));
+workshopper.addAll(menu)
 workshopper.execute(process.argv.slice(2))

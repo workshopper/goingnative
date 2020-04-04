@@ -17,4 +17,3 @@ if (!binding) {
 if (binding.test !== 'OK') {
   console.error('Could not properly compile test addon, binding did not behave properly')
 }
-

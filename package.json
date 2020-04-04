@@ -10,6 +10,7 @@
     "url": "https://github.com/rvagg/goingnative.git"
   },
   "scripts": {
+    "lint": "standard",
     "postinstall": "node postinstall.js"
   },
   "author": "Rod Vagg <rod@vagg.org> (https://github.com/rvagg)",
@@ -35,5 +36,8 @@
     "workshopper-exercise": "~1.1.0",
     "workshopper-hooray": "~1.1.0",
     "workshopper-more": "~1.0.1"
+  },
+  "devDependencies": {
+    "standard": "^14.3.3"
   }
 }

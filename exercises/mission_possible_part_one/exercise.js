@@ -1,20 +1,17 @@
-const boilerplate  = require('workshopper-boilerplate')
-    , path         = require('path')
-    , copy         = require('../../lib/copy')
-    , solutions    = require('../../lib/solutions')
-    , check        = require('../../lib/check')
-    , gyp          = require('../../lib/gyp')
-    , packagejson  = require('../../lib/packagejson')
+const boilerplate = require('workshopper-boilerplate')
+const path = require('path')
+const copy = require('../../lib/copy')
+const solutions = require('../../lib/solutions')
+const check = require('../../lib/check')
+const gyp = require('../../lib/gyp')
+const packagejson = require('../../lib/packagejson')
 
-
-      // name of the module required in binding.gyp
+// name of the module required in binding.gyp
 const boilerplateName = 'myaddon'
-      // what we should get on stdout for this to pass
-    , solutionFiles   = [ 'package.json', 'binding.gyp' ]
-
+// what we should get on stdout for this to pass
+const solutionFiles = ['package.json', 'binding.gyp']
 
 var exercise = require('workshopper-exercise')()
-
 
 // add solutions file listing from solutions/ directory
 exercise = solutions(exercise, solutionFiles)
@@ -37,6 +34,5 @@ function boilerplateSetup (callback) {
   var target = path.join(process.cwd(), exercise.boilerplateOut[boilerplateName])
   copy.copyDeps(target, callback)
 }
-
 
 module.exports = exercise
