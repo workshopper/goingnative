@@ -33,7 +33,7 @@
     "varstring": "~0.2.0",
     "workshopper-adventure": "^6.1.0",
     "workshopper-boilerplate": "~1.1.2",
-    "workshopper-exercise": "~1.1.0",
+    "workshopper-exercise": "^3.0.1",
     "workshopper-hooray": "~1.1.0",
     "workshopper-more": "~1.0.1"
   },
