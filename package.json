@@ -11,6 +11,7 @@
   },
   "scripts": {
     "lint": "standard",
+    "test": "npm run lint && tape test/*.js",
     "postinstall": "node postinstall.js"
   },
   "author": "Rod Vagg <rod@vagg.org> (https://github.com/rvagg)",
@@ -38,6 +39,7 @@
     "workshopper-more": "~1.0.1"
   },
   "devDependencies": {
-    "standard": "^14.3.3"
+    "standard": "^14.3.3",
+    "tape": "^4.13.2"
   }
 }
