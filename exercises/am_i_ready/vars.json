@@ -2,7 +2,7 @@
   "versions" : {
     "node": {
       "min": "10.x",
-      "max": "13.x"
+      "max": "14.x"
     },
     "gcc" : "4.4.0",
     "llvm" : "4.2",
