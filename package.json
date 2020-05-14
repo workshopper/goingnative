@@ -12,7 +12,8 @@
   "scripts": {
     "lint": "standard",
     "test": "npm run lint && tape test/*.js",
-    "postinstall": "node postinstall.js"
+    "postinstall": "node postinstall.js",
+    "release": "standard-version"
   },
   "author": "Rod Vagg <rod@vagg.org> (https://github.com/rvagg)",
   "license": "MIT",
@@ -40,6 +41,12 @@
   },
   "devDependencies": {
     "standard": "^14.3.3",
+    "standard-version": "^8.0.0",
     "tape": "^4.13.2"
+  },
+  "standard-version": {
+    "bumpFiles": [
+      "package.json"
+    ]
   }
 }
