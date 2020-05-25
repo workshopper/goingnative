@@ -120,7 +120,13 @@ function checkExec (mode, callback) {
         process.stdout.write(stdout)
       }
 
-      if (seminl) { exercise.emit('fail', 'Addon prints out expected string (missing newline)') } else if (semicase) { exercise.emit('fail', 'Addon prints out expected string (printed with wrong character case)') } else { exercise.emit(pass ? 'pass' : 'fail', 'Addon prints out expected string') }
+      if (seminl) {
+        exercise.emit('fail', 'Addon prints out expected string (missing newline)')
+      } else if (semicase) {
+        exercise.emit('fail', 'Addon prints out expected string (printed with wrong character case)')
+      } else {
+        exercise.emit(pass ? 'pass' : 'fail', 'Addon prints out expected string')
+      }
 
       callback(null, pass)
     }
