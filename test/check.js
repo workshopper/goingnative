@@ -7,7 +7,7 @@ const { idFromName } = require('workshopper-adventure/util')
 const cleanFile = async (path, callback) => {
   fsp.access(path)
     .then(() => callback(path))
-    .catch(e => {})
+    .catch(() => {})
 }
 
 const exercises = require('../exercises/menu.json')

@@ -10,7 +10,7 @@
     "url": "https://github.com/rvagg/goingnative.git"
   },
   "scripts": {
-    "lint": "standard",
+    "lint": "standard && jshint --exclude=node_modules .",
     "test": "npm run lint && tape test/*.js",
     "postinstall": "node postinstall.js",
     "release": "standard-version"
@@ -40,6 +40,7 @@
     "workshopper-more": "~1.0.1"
   },
   "devDependencies": {
+    "jshint": "^2.11.1",
     "standard": "^14.3.3",
     "standard-version": "^8.0.0",
     "tape": "^4.13.2"
