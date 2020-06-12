@@ -6,24 +6,20 @@
     },
     "gcc" : "4.4.0",
     "llvm" : "4.2",
-    "python" : {
-      "min" : "2.6.x",
-      "max" : "2.7.x"
-    },
     "gyp" : "0.12.0"
   },
   "instructions" : {
     "Debian" : {
       "gcc" : "Install with `sudo apt-get install build-essential`.",
-      "python" : "Install with `sudo apt-get install python-all`."
+      "python" : "Install with `sudo apt-get install python3.8`."
     },
     "Ubuntu Linux" : {
       "gcc" : "Install with `apt-get install build-essential`.",
-      "python" : "Install with `sudo apt-get install python2.7`."
+      "python" : "Install with `sudo apt-get install python3.8`."
     },
     "Arch Linux" : {
       "gcc" : "Install with `sudo pacman -S base-devel`.",
-      "python" : "Install with `sudo pacman -S python2`."
+      "python" : "Install with `sudo pacman -S python`."
     },
     "Darwin" : {
       "gcc" : "Visit <https://developer.apple.com/xcode/downloads/>.",
@@ -31,11 +27,11 @@
     },
     "win32" : {
       "gcc" : "On **Windows**, you should install Visual Studio Community Edition 2013 http://go.microsoft.com/fwlink/?LinkId=517284.",
-      "python" : "Python must be in your PATH: on Mac and Linux this should be handled by default. On **Windows 8**, you should search 'environment' from the search menu, and click 'edit environment variable for your account', then you should edit 'PATH', and add ';C:\\Python27'. On **Windows 7**, you can access a similar menu at My Computer > Properties > Advanced System Settings > Environment Variables'."
+      "python" : "Python must be in your PATH: on Mac and Linux this should be handled by default. On **Windows 8**, you should search 'environment' from the search menu, and click 'edit environment variable for your account', then you should edit 'PATH', and add your Python's path (Ex: ';C:\\Python38'). On **Windows 7**, you can access a similar menu at My Computer > Properties > Advanced System Settings > Environment Variables'."
     },
     "Other" : {
       "gcc" : "Use your native package manager to install build tools including gcc.",
-      "python" : "Download from <https://www.python.org/download/releases/2.7.7> or use your package manager."
+      "python" : "Download from <https://www.python.org/downloads/> or use your package manager."
     }
   }
 }

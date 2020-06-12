@@ -1,0 +1,12 @@
+{
+  "exercises": {
+    "AM I READY?": {
+      "fail": {
+        "python": "Invalid python version: {{message}}"
+      },
+      "pass": {
+        "python": "Found usable python in $PATH: v{{version}}"
+      }
+    }
+  }
+}
