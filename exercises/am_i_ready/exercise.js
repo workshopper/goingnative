@@ -1,8 +1,6 @@
 const versions = require('./vars.json').versions
 const MIN_GCC_VERSION = versions.gcc
 const MIN_LLVM_VERSION = versions.llvm
-const MIN_PYTHON_VERSION = versions.python.min
-const MAX_PYTHON_VERSION = versions.python.max
 const MIN_NODE_GYP_VERSION = versions.gyp
 const MIN_NODE_VERSION = versions.node.min
 const MAX_NODE_VERSION = versions.node.max
@@ -13,9 +11,9 @@ const fs = require('fs')
 const semver = require('semver')
 const chalk = require('chalk')
 const rimraf = require('rimraf')
-const python = require('check-python')
 const copy = require('../../lib/copy')
 const win = process.platform === 'win32'
+const checkPython = require('../../lib/check-python')
 
 const testPackageSrc = path.join(__dirname, '../../packages/test-addon/')
 // a place to make a full copy to run a test compile
@@ -25,6 +23,7 @@ var exercise = require('workshopper-exercise')()
 
 exercise.requireSubmission = false // don't need a submission arg
 exercise.addSetup(setup)
+exercise.addProcessor(checkPython)
 exercise.addProcessor(processor)
 exercise.addCleanup(cleanup)
 
@@ -44,7 +43,7 @@ function cleanup (mode, pass, callback) {
 }
 
 function processor (mode, callback) {
-  var checks = [checkNode, win ? checkMsvc : checkGcc, checkPython, checkNodeGyp, checkBuild]
+  var checks = [checkNode, win ? checkMsvc : checkGcc, checkNodeGyp, checkBuild]
   var pass = true
 
   ;(function checkNext (curr) {
@@ -185,47 +184,6 @@ function checkMsvc (pass, callback) {
   callback(null, true)
 }
 
-function checkPython (pass, callback) {
-  python(function (err, python, version) {
-    if (err) {
-      exercise.emit('fail', 'Check for `' + chalk.bold('python') + '`: ' + err.message)
-      return callback(null, false)
-    }
-
-    if (!semver.satisfies(version, '>=' + MIN_PYTHON_VERSION)) {
-      exercise.emit('fail',
-        '`' +
-          chalk.bold('python') +
-          '` version is too old: ' +
-          chalk.bold('v' + version) +
-          ', please install a version >= ' +
-          chalk.bold('v' + MIN_PYTHON_VERSION) +
-          ' and <= ' +
-          chalk.bold('v' + MAX_PYTHON_VERSION)
-      )
-      return callback(null, false)
-    }
-
-    if (!semver.satisfies(version, '~' + MAX_PYTHON_VERSION)) {
-      exercise.emit('fail',
-        '`' +
-          chalk.bold('python') +
-          '` version is too new: ' +
-          chalk.bold('v' + version) +
-          ', please install a version >= ' +
-          chalk.bold('v' + MIN_PYTHON_VERSION) +
-          ' and <= ' +
-          chalk.bold('v' + MAX_PYTHON_VERSION)
-      )
-      return callback(null, false)
-    }
-
-    exercise.emit('pass', 'Found usable `' + chalk.bold('python') + '` in $PATH: ' + chalk.bold('v' + version))
-
-    callback(null, true)
-  })
-}
-
 function checkNodeGyp (pass, callback) {
   function checkVersionString (print, versionString) {
     if (!versionString) {
@@ -240,7 +198,7 @@ function checkNodeGyp (pass, callback) {
           '` version is too old: ' +
           chalk.bold('v' + versionString) +
           ', please install a version >= ' +
-          chalk.bold('v' + MAX_PYTHON_VERSION)
+          chalk.bold('v' + MIN_NODE_GYP_VERSION)
       )
       return false
     }
