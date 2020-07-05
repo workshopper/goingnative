@@ -1,11 +1,11 @@
 const path = require('path')
-const childProcess = require('child_process')
 const copy = require('../../lib/copy')
 const gyp = require('../../lib/gyp')
 const solutions = require('../../lib/solutions')
 const check = require('../../lib/check')
 const compile = require('../../lib/compile')
 const packagejson = require('../../lib/packagejson')
+const execWith = require('../../lib/execWith')
 
 const solutionFiles = ['myaddon.cc', 'index.js']
 // a place to make a full copy to run a test compile
@@ -38,34 +38,6 @@ function copyFauxAddon (mode, callback) {
 
     callback(null, true)
   })
-}
-
-function execWith (dir, arg, expect, callback) {
-  childProcess.exec(
-    '"' +
-      process.execPath +
-      '" "' +
-      dir +
-      '" "' +
-      arg +
-      '"'
-    , function (err, stdout, stderr) {
-      if (err) {
-        process.stderr.write(stderr)
-        process.stdout.write(stdout)
-        return callback(err)
-      }
-
-      var pass = stdout.toString().replace('\r', '') === expect
-
-      if (!pass) {
-        process.stderr.write(stderr)
-        process.stdout.write(stdout)
-      }
-
-      callback(null, pass)
-    }
-  )
 }
 
 // run `node-gyp rebuild` on a mocked version of the addon that prints what we want

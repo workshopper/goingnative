@@ -1,12 +1,12 @@
 const boilerplate = require('workshopper-boilerplate')
 const path = require('path')
-const childProcess = require('child_process')
 const copy = require('../../lib/copy')
 const compile = require('../../lib/compile')
 const solutions = require('../../lib/solutions')
 const check = require('../../lib/check')
 const gyp = require('../../lib/gyp')
 const packagejson = require('../../lib/packagejson')
+const execWith = require('../../lib/execWith')
 
 // a place to make a full copy to run a test compile
 const copyTempDir = path.join(process.cwd(), '~test-addon.' + Math.floor(Math.random() * 10000))
@@ -61,28 +61,15 @@ function checkJs (mode, callback) {
       return callback(null, false)
     }
 
-    childProcess.exec(
-      '"' +
-        process.execPath +
-        '" "' +
-        require.resolve('../../lib/require-argv2') +
-        '" "' +
-        copyFauxTempDir +
-        '"'
-      , function (err, stdout, stderr) {
+    execWith(
+      require.resolve('../../lib/require-argv2'),
+      copyFauxTempDir,
+      'FAUX\n',
+      function (err, pass) {
         if (err) {
-          process.stderr.write(stderr)
-          process.stdout.write(stdout)
           return callback(err)
         }
 
-        var pass = stdout.toString().replace('\r', '') === 'FAUX\n'
-        if (!pass) {
-          console.log('stdout: [%s]', stdout.toString())
-          console.log('stderr: [%s]', stderr.toString())
-          process.stderr.write(stderr)
-          process.stdout.write(stdout)
-        }
         exercise.emit(pass ? 'pass' : 'fail', 'JavaScript code loads addon and invokes `print()` method')
 
         callback(null, pass)
@@ -96,36 +83,32 @@ function checkJs (mode, callback) {
 function checkExec (mode, callback) {
   if (!exercise.passed) { return callback(null, true) } // shortcut if we've already had a failure
 
-  childProcess.exec(
-    '"' +
-      process.execPath +
-      '" "' +
-      require.resolve('../../lib/require-argv2') +
-      '" "' +
-      copyTempDir +
-      '"'
-    , function (err, stdout, stderr) {
+  execWith(
+    require.resolve('../../lib/require-argv2'),
+    copyTempDir,
+    `${expected}\n`,
+    {
+      processPass: function (pass, stdout, stderr) {
+        const seminl = !pass && stdout.toString() === expected
+        const semicase = !pass && !seminl && new RegExp(expected, 'i').test(stdout.toString())
+
+        if (!seminl && !semicase && !pass) {
+          process.stderr.write(stderr)
+          process.stdout.write(stdout)
+        }
+
+        if (seminl) {
+          exercise.emit('fail', 'Addon prints out expected string (missing newline)')
+        } else if (semicase) {
+          exercise.emit('fail', 'Addon prints out expected string (printed with wrong character case)')
+        } else {
+          exercise.emit(pass ? 'pass' : 'fail', 'Addon prints out expected string')
+        }
+      }
+    },
+    function (err, pass) {
       if (err) {
-        process.stderr.write(stderr)
-        process.stdout.write(stdout)
         return callback(err)
-      }
-
-      var pass = stdout.toString().replace('\r', '') === expected + '\n'
-      var seminl = !pass && stdout.toString() === expected
-      var semicase = !pass && !seminl && new RegExp(expected, 'i').test(stdout.toString())
-
-      if (!seminl && !semicase && !pass) {
-        process.stderr.write(stderr)
-        process.stdout.write(stdout)
-      }
-
-      if (seminl) {
-        exercise.emit('fail', 'Addon prints out expected string (missing newline)')
-      } else if (semicase) {
-        exercise.emit('fail', 'Addon prints out expected string (printed with wrong character case)')
-      } else {
-        exercise.emit(pass ? 'pass' : 'fail', 'Addon prints out expected string')
       }
 
       callback(null, pass)
