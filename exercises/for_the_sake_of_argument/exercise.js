@@ -6,6 +6,7 @@ const solutions = require('../../lib/solutions')
 const check = require('../../lib/check')
 const compile = require('../../lib/compile')
 const packagejson = require('../../lib/packagejson')
+const execWith = require('../../lib/execWith')
 
 const solutionFiles = ['myaddon.cc', 'index.js']
 // a place to make a full copy to run a test compile
@@ -55,29 +56,15 @@ function checkJs (mode, callback) {
       return callback(null, false)
     }
 
-    childProcess.exec(
-      '"' +
-        process.execPath +
-        '" "' +
-        copyFauxTempDir +
-        '" "FAUX"'
-      , function (err, stdout, stderr) {
-        if (err) {
-          process.stderr.write(stderr)
-          process.stdout.write(stdout)
-          return callback(err)
-        }
-
-        var pass = stdout.toString().replace('\r', '') === 'FAUX\n'
-        if (!pass) {
-          process.stderr.write(stderr)
-          process.stdout.write(stdout)
-        }
-        exercise.emit(pass ? 'pass' : 'fail', 'JavaScript code loads addon and invokes `print(str)` method')
-
-        callback(null, pass)
+    execWith(copyFauxTempDir, 'FAUX', 'FAUX\n', function (err, pass) {
+      if (err) {
+        return callback(err)
       }
-    )
+
+      exercise.emit(pass ? 'pass' : 'fail', 'JavaScript code loads addon and invokes `print(str)` method')
+
+      callback(null, pass)
+    })
   })
 }
 

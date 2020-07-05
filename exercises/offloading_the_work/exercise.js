@@ -1,5 +1,4 @@
 const path = require('path')
-const childProcess = require('child_process')
 const boilerplate = require('workshopper-boilerplate')
 const copy = require('../../lib/copy')
 const gyp = require('../../lib/gyp')
@@ -7,6 +6,7 @@ const solutions = require('../../lib/solutions')
 const check = require('../../lib/check')
 const compile = require('../../lib/compile')
 const packagejson = require('../../lib/packagejson')
+const execWith = require('../../lib/execWith')
 
 const solutionFiles = ['myaddon.cc']
 // a place to make a full copy to run a test compile
@@ -47,33 +47,7 @@ function copyFauxAddon (mode, callback) {
   })
 }
 
-function execWith (dir, arg, expect, callback) {
-  childProcess.exec(
-    '"' +
-      process.execPath +
-      '" "' +
-      dir +
-      '" "' +
-      arg +
-      '"'
-    , function (err, stdout, stderr) {
-      if (err) {
-        process.stderr.write(stderr)
-        process.stdout.write(stdout)
-        return callback(err)
-      }
-
-      var pass = expect.test(stdout.toString().replace(/\r/g, ''))
-
-      if (!pass) {
-        process.stderr.write(stderr)
-        process.stdout.write(stdout)
-      }
-
-      callback(null, pass)
-    }
-  )
-}
+const resolvePass = (expected, stdout) => expected.test(stdout.toString().replace(/\r/g, ''))
 
 // run `node-gyp rebuild` on a mocked version of the addon that prints what we want
 // so we can test that their JS is doing what it is supposed to be doing and there
@@ -90,7 +64,7 @@ function checkJs (mode, callback) {
       return callback(null, false)
     }
 
-    execWith(copyFauxTempDir, 111, expect, function (err, pass) {
+    execWith(copyFauxTempDir, 111, expect, { resolvePass }, function (err, pass) {
       if (err) { return callback(err) }
 
       if (!pass) {
@@ -98,7 +72,7 @@ function checkJs (mode, callback) {
         return callback(null, false)
       }
 
-      execWith(copyFauxTempDir, 1111, expect, function (err, pass) {
+      execWith(copyFauxTempDir, 1111, expect, { resolvePass }, function (err, pass) {
         if (err) { return callback(err) }
 
         exercise.emit(pass ? 'pass' : 'fail'
@@ -117,7 +91,7 @@ function checkExec (mode, callback) {
   var expect = /Waiting\.\.*Done!\n/m
   var start = Date.now()
 
-  execWith(copyTempDir, 111, expect, function (err, pass) {
+  execWith(copyTempDir, 111, expect, { resolvePass }, function (err, pass) {
     if (err) { return callback(err) }
 
     if (!pass) {
@@ -133,7 +107,7 @@ function checkExec (mode, callback) {
     }
 
     start = Date.now()
-    execWith(copyTempDir, 1111, expect, function (err, pass) {
+    execWith(copyTempDir, 1111, expect, { resolvePass }, function (err, pass) {
       if (err) { return callback(err) }
 
       delay = Date.now() - start

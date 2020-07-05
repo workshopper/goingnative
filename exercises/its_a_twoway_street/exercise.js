@@ -1,11 +1,11 @@
 const path = require('path')
-const childProcess = require('child_process')
 const copy = require('../../lib/copy')
 const gyp = require('../../lib/gyp')
 const solutions = require('../../lib/solutions')
 const check = require('../../lib/check')
 const compile = require('../../lib/compile')
 const packagejson = require('../../lib/packagejson')
+const execWith = require('../../lib/execWith')
 
 const solutionFiles = ['myaddon.cc', 'index.js']
 // a place to make a full copy to run a test compile
@@ -39,33 +39,7 @@ function copyFauxAddon (mode, callback) {
   })
 }
 
-function execWith (dir, str, callback) {
-  childProcess.exec(
-    '"' +
-      process.execPath +
-      '" "' +
-      dir +
-      '" "' +
-      str +
-      '"'
-    , function (err, stdout, stderr) {
-      if (err) {
-        process.stderr.write(stderr)
-        process.stdout.write(stdout)
-        return callback(err)
-      }
-
-      var pass = stdout.toString().replace('\r', '') === Buffer.from(str).length + '\n'
-
-      if (!pass) {
-        process.stderr.write(stderr)
-        process.stdout.write(stdout)
-      }
-
-      callback(null, pass)
-    }
-  )
-}
+const expectFn = (arg) => (Buffer.from(arg).length + '\n')
 
 // run `node-gyp rebuild` on a mocked version of the addon that prints what we want
 // so we can test that their JS is doing what it is supposed to be doing and there
@@ -81,14 +55,14 @@ function checkJs (mode, callback) {
       return callback(null, false)
     }
 
-    execWith(copyFauxTempDir, '♥ FAUX', function (err, pass) {
+    execWith(copyFauxTempDir, '♥ FAUX', expectFn, function (err, pass) {
       if (err) { return callback(err) }
       if (!pass) {
         exercise.emit('fail', 'JavaScript code loads addon, invokes `length(str)` method and prints the return value')
         return callback(null, false)
       }
 
-      execWith(copyFauxTempDir, '♥ FAUX FAUX FAUX FAUX ♥', function (err, pass) {
+      execWith(copyFauxTempDir, '♥ FAUX FAUX FAUX FAUX ♥', expectFn, function (err, pass) {
         if (err) { return callback(err) }
 
         exercise.emit(pass ? 'pass' : 'fail'
@@ -104,14 +78,14 @@ function checkJs (mode, callback) {
 function checkExec (mode, callback) {
   if (!exercise.passed) { return callback(null, true) } // shortcut if we've already had a failure
 
-  execWith(copyTempDir, 'testing', function (err, pass) {
+  execWith(copyTempDir, 'testing', expectFn, function (err, pass) {
     if (err) { return callback(err) }
     if (!pass) {
       exercise.emit('fail', 'JavaScript code loads addon, invokes `length(str)` method and prints the return value')
       return callback(null, false)
     }
 
-    execWith(copyTempDir, 'this is a longer test string, with spaces in it', function (err, pass) {
+    execWith(copyTempDir, 'this is a longer test string, with spaces in it', expectFn, function (err, pass) {
       if (err) { return callback(err) }
 
       exercise.emit(pass ? 'pass' : 'fail', 'Add-on receives string, calculates length and returns value')
