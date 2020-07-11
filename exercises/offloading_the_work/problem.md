@@ -33,7 +33,7 @@ Waiting..........................Done!
 
 Node.js spins up 4 worker threads (by default) in a thread-pool for handling file system I/O. In our C++ code we can easily make use of this thread-pool to offload work from the JavaScript thread. Your task is to get the `usleep()` or `Sleep()` to run on a worker thread and then have the callback fire from within the JavaScript thread.
 
-Thankfully NAN makes this a little easier than it otherwise would be to achieve.
+Fortunately, NAN makes this a little easier otherwise it would be difficult to achieve.
 
 We have also given you a new file {boilerplate:myaddon.cc} in your current working directory that has a basic structure you can use. It defines a `MyWorker` C++ *class* that extends the `Nan::AsyncWorker` class that NAN uses to define a discrete chunk of asynchronous work.
 
