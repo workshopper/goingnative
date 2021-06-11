@@ -9,8 +9,8 @@
 ***Please note this is a work in progress and is far from complete but will serve as an interesting introduction***
 
 ```sh
-$ sudo npm install goingnative -g
-$ goingnative
+sudo npm install goingnative -g
+goingnative
 ```
 
 ## Contributors
