@@ -26,7 +26,9 @@ exercises.forEach(function (name) {
       const ps = run(['verify', solution])
       ps.on('exit', verified)
       ps.stderr.pipe(process.stderr)
-      // ps.stdout.pipe(process.stdout)
+      test.onFailure(() => {
+        ps.stdout.pipe(process.stdout)
+      })
     }
 
     async function verified (code) {
