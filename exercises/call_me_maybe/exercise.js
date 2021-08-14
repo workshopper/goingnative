@@ -77,38 +77,47 @@ function checkJs (mode, callback) {
 function checkExec (mode, callback) {
   if (!exercise.passed) { return callback(null, true) } // shortcut if we've already had a failure
 
-  var start = Date.now()
-  execWith(copyTempDir, 111, 'Done!\n', function (err, pass) {
-    if (err) { return callback(err) }
+  return runOrRetry(true)
 
-    if (!pass) {
-      exercise.emit('fail', 'JavaScript code loads addon, invokes `delay(x, cb)` method and sleeps for x milliseconds')
-      return callback(null, false)
-    }
-
-    var delay = Date.now() - start
-
-    if (delay < 100 || delay > 300) {
-      exercise.emit('fail', 'Slept for the right amount of time (asked for 111ms, slept for ' + delay + ')')
-      return callback(null, false)
-    }
-
-    start = Date.now()
-    execWith(copyTempDir, 1111, 'Done!\n', function (err, pass) {
+  function runOrRetry (retry) {
+    var start = Date.now()
+    execWith(copyTempDir, 111, 'Done!\n', function (err, pass) {
       if (err) { return callback(err) }
 
-      delay = Date.now() - start
-
-      if (delay < 1000 || delay > 1300) {
-        exercise.emit('fail', 'Slept for the right amount of time (asked for 1111ms, slept for ' + delay + 'ms)')
+      if (!pass) {
+        exercise.emit('fail', 'JavaScript code loads addon, invokes `delay(x, cb)` method' +
+            ' and sleeps for x milliseconds')
         return callback(null, false)
       }
 
-      exercise.emit(pass ? 'pass' : 'fail'
-        , 'JavaScript code loads addon, invokes `delay(x, cb)` method and sleeps for x milliseconds')
-      callback(null, pass)
+      var delay = Date.now() - start
+
+      if (delay < 100 || delay > 300) {
+        if (retry) {
+          return runOrRetry(false)
+        } else {
+          exercise.emit('fail', 'Slept for the right amount of time (asked for 111ms, slept for ' + delay + ')')
+          return callback(null, false)
+        }
+      }
+
+      start = Date.now()
+      execWith(copyTempDir, 1111, 'Done!\n', function (err, pass) {
+        if (err) { return callback(err) }
+
+        delay = Date.now() - start
+
+        if (delay < 1000 || delay > 1300) {
+          exercise.emit('fail', 'Slept for the right amount of time (asked for 1111ms, slept for ' + delay + 'ms)')
+          return callback(null, false)
+        }
+
+        exercise.emit(pass ? 'pass' : 'fail'
+          , 'JavaScript code loads addon, invokes `delay(x, cb)` method and sleeps for x milliseconds')
+        callback(null, pass)
+      })
     })
-  })
+  }
 }
 
 module.exports = exercise
