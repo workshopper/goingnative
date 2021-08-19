@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 const Workshopper = require('workshopper-adventure')
 const path = require('path')
 const credits = require('./credits')
@@ -43,4 +41,4 @@ const workshopper = Workshopper({
 })
 
 workshopper.addAll(menu)
-workshopper.execute(process.argv.slice(2))
+module.exports = workshopper
