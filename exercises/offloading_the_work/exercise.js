@@ -7,6 +7,7 @@ const check = require('../../lib/check')
 const compile = require('../../lib/compile')
 const packagejson = require('../../lib/packagejson')
 const execWith = require('../../lib/execWith')
+const execWithMeasured = require('../../lib/execWithMeasured')
 
 const solutionFiles = ['myaddon.cc']
 // a place to make a full copy to run a test compile
@@ -88,48 +89,43 @@ function checkJs (mode, callback) {
 function checkExec (mode, callback) {
   if (!exercise.passed) { return callback(null, true) } // shortcut if we've already had a failure
 
-  return runOrRetry(true)
+  const expect = /Waiting\.\.*Done!\n/m
 
-  function runOrRetry (retry) {
-    var expect = /Waiting\.\.*Done!\n/m
-    var start = Date.now()
+  execWithMeasured(copyTempDir, 111, expect, { resolvePass }, function (err, result) {
+    if (err) { return callback(err) }
 
-    execWith(copyTempDir, 111, expect, { resolvePass }, function (err, pass) {
+    if (!result.pass) {
+      exercise.emit('fail', 'JavaScript code loads addon, invokes `delay(x, cb)` method and sleeps for x seconds')
+      return callback(null, false)
+    }
+
+    let delay = result.duration
+
+    if (delay < 100 || delay > 600) {
+      if (retry) {
+        return runOrRetry(false)
+      } else {
+        exercise.emit('fail', 'Slept for the right amount of time (asked for 111ms, slept for ' + delay + 'ms)')
+        return callback(null, false)
+      }
+    }
+
+    execWithMeasured(copyTempDir, 1111, expect, { resolvePass }, function (err, result) {
       if (err) { return callback(err) }
 
-      if (!pass) {
-        exercise.emit('fail', 'JavaScript code loads addon, invokes `delay(x, cb)` method and sleeps for x seconds')
+      delay = result.duration
+
+      if (delay < 1000 || delay > 1500) {
+        exercise.emit('fail', 'Slept for the right amount of time (asked for 1111ms, slept for ' + delay + 'ms)')
         return callback(null, false)
       }
 
-      var delay = Date.now() - start
-
-      if (delay < 100 || delay > 600) {
-        if (retry) {
-          return runOrRetry(false)
-        } else {
-          exercise.emit('fail', 'Slept for the right amount of time (asked for 111ms, slept for ' + delay + 'ms)')
-          return callback(null, false)
-        }
-      }
-
-      start = Date.now()
-      execWith(copyTempDir, 1111, expect, { resolvePass }, function (err, pass) {
-        if (err) { return callback(err) }
-
-        delay = Date.now() - start
-
-        if (delay < 1000 || delay > 1500) {
-          exercise.emit('fail', 'Slept for the right amount of time (asked for 1111ms, slept for ' + delay + 'ms)')
-          return callback(null, false)
-        }
-
-        exercise.emit(pass ? 'pass' : 'fail'
-          , 'JavaScript code loads addon, invokes `delay(x, cb)` method and sleeps for x seconds')
-        callback(null, pass)
-      })
+      const pass = result.pass
+      exercise.emit(pass ? 'pass' : 'fail'
+        , 'JavaScript code loads addon, invokes `delay(x, cb)` method and sleeps for x seconds')
+      callback(null, pass)
     })
-  }
+  })
 }
 
 module.exports = exercise
