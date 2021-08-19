@@ -11,8 +11,8 @@ const problem = fs.readFileSync(tmpl, 'utf-8')
 getos(function (err, os) {
   if (err) { throw err }
 
-  var lookup = os.dist ? os.dist : os.os
-  var markdown = varstring(problem, instructions[lookup] || instructions.Other)
+  const lookup = os.dist ? os.dist : os.os
+  const markdown = varstring(problem, instructions[lookup] || instructions.Other)
 
   fs.writeFileSync(out, markdown, 'utf8')
 })

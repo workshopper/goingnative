@@ -19,7 +19,7 @@ const testPackageSrc = path.join(__dirname, '../../packages/test-addon/')
 // a place to make a full copy to run a test compile
 const testPackageRnd = path.join(process.cwd(), '~test-addon.' + Math.floor(Math.random() * 10000))
 
-var exercise = require('workshopper-exercise')()
+const exercise = require('workshopper-exercise')()
 
 exercise.requireSubmission = false // don't need a submission arg
 exercise.addSetup(setup)
@@ -43,8 +43,8 @@ function cleanup (mode, pass, callback) {
 }
 
 function processor (mode, callback) {
-  var checks = [checkNode, win ? checkMsvc : checkGcc, checkNodeGyp, checkBuild]
-  var pass = true
+  const checks = [checkNode, win ? checkMsvc : checkGcc, checkNodeGyp, checkBuild]
+  let pass = true
 
   ;(function checkNext (curr) {
     if (!checks[curr]) { return callback(null, pass) }
@@ -101,9 +101,9 @@ function checkGcc (pass, callback) {
       return callback(null, false)
     }
 
-    var versionMatch = stderr.toString().split('\n').filter(Boolean).pop()
+    let versionMatch = stderr.toString().split('\n').filter(Boolean).pop()
       .match(/gcc version (\d+\.\d+\.\d+) /)
-    var versionString
+    let versionString
 
     if (versionMatch) {
       versionString = versionMatch && versionMatch[1]
@@ -146,13 +146,13 @@ function checkGcc (pass, callback) {
 }
 
 function checkMsvc (pass, callback) {
-  var msvsVars = {
+  const msvsVars = {
     2015: 'VS140COMNTOOLS',
     2013: 'VS130COMNTOOLS',
     2012: 'VS120COMNTOOLS',
     2011: 'VS110COMNTOOLS'
   }
-  var msvsVersion = Object.keys(msvsVars).reverse().filter(function (k) {
+  const msvsVersion = Object.keys(msvsVars).reverse().filter(function (k) {
     return !!process.env[msvsVars[k]]
   })[0]
 
@@ -218,8 +218,8 @@ function checkNodeGyp (pass, callback) {
         return callback(null, false)
       }
 
-      var versionMatch = stdout.toString().match(/node-gyp@(\d+\.\d+\.\d+)/)
-      var versionString = versionMatch && versionMatch[1]
+      const versionMatch = stdout.toString().match(/node-gyp@(\d+\.\d+\.\d+)/)
+      const versionString = versionMatch && versionMatch[1]
 
       callback(null, checkVersionString(true, versionString), versionString)
     })
@@ -239,8 +239,8 @@ function checkNodeGyp (pass, callback) {
         return callback(null, false)
       }
 
-      var versionMatch = stdout.toString().match(/v(\d+\.\d+\.\d+)/)
-      var versionString = versionMatch && versionMatch[1]
+      const versionMatch = stdout.toString().match(/v(\d+\.\d+\.\d+)/)
+      const versionString = versionMatch && versionMatch[1]
 
       callback(null, checkVersionString(false, versionString), versionString)
     })

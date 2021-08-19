@@ -1,6 +1,6 @@
 const bindings = require('bindings')
 
-var binding
+let binding
 
 try {
   binding = bindings({ module_root: process.argv[2], bindings: 'test' })

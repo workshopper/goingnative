@@ -1,6 +1,6 @@
-var addon = require('bindings')('myaddon')
+const addon = require('bindings')('myaddon')
 
-var interval = setInterval(function () {
+const interval = setInterval(function () {
   process.stdout.write('.')
 }, 50)
 

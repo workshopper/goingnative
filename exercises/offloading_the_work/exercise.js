@@ -15,7 +15,7 @@ const copyTempDir = path.join(process.cwd(), '~test-addon.' + Math.floor(Math.ra
 const copyFauxTempDir = path.join(process.cwd(), '~test-addon-faux.' + Math.floor(Math.random() * 10000))
 // what we should get on stdout for this to pass
 
-var exercise = require('workshopper-exercise')()
+let exercise = require('workshopper-exercise')()
 
 // add solutions file listing from solutions/ directory
 exercise = solutions(exercise, solutionFiles)
@@ -53,8 +53,8 @@ const resolvePass = (expected, stdout) => expected.test(stdout.toString().replac
 // so we can test that their JS is doing what it is supposed to be doing and there
 // is no cheating! (e.g. console.log(...))
 function checkJs (mode, callback) {
-  var exercise = this
-  var expect = /FAUX 1\nFAUX 2\nWaiting\.*FAUX 3\n\.+FAUX 4\n\.*Done!\n/m
+  const exercise = this
+  const expect = /FAUX 1\nFAUX 2\nWaiting\.*FAUX 3\n\.+FAUX 4\n\.*Done!\n/m
 
   if (!exercise.passed) { return callback(null, true) } // shortcut if we've already had a failure
 
@@ -88,8 +88,8 @@ function checkJs (mode, callback) {
 function checkExec (mode, callback) {
   if (!exercise.passed) { return callback(null, true) } // shortcut if we've already had a failure
 
-  var expect = /Waiting\.\.*Done!\n/m
-  var start = Date.now()
+  const expect = /Waiting\.\.*Done!\n/m
+  let start = Date.now()
 
   execWith(copyTempDir, 111, expect, { resolvePass }, function (err, pass) {
     if (err) { return callback(err) }

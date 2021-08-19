@@ -16,7 +16,7 @@ const copyFauxTempDir = path.join(process.cwd(), '~test-addon-faux.' + Math.floo
 const expected = 'I am a native addon and I AM ALIVE!'
 const solutionFiles = ['myaddon.cc']
 
-var exercise = require('workshopper-exercise')()
+let exercise = require('workshopper-exercise')()
 
 // add solutions file listing from solutions/ directory
 exercise = solutions(exercise, solutionFiles)
@@ -51,7 +51,7 @@ function copyFauxAddon (mode, callback) {
 // so we can test that their JS is doing what it is supposed to be doing and there
 // is no cheating! (e.g. console.log(...))
 function checkJs (mode, callback) {
-  var exercise = this
+  const exercise = this
 
   if (!exercise.passed) { return callback(null, true) } // shortcut if we've already had a failure
 

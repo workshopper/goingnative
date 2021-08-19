@@ -10,7 +10,7 @@ const execWith = require('../../lib/execWith')
 const copyFauxTempDir = path.join(process.cwd(), '~test-addon-faux.' + Math.floor(Math.random() * 10000))
 const solutionFiles = ['index.js']
 
-var exercise = require('workshopper-exercise')()
+let exercise = require('workshopper-exercise')()
 
 // add solutions file listing from solutions/ directory
 exercise = solutions(exercise, solutionFiles)

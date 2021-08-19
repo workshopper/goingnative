@@ -11,7 +11,7 @@ const boilerplateName = 'myaddon'
 // what we should get on stdout for this to pass
 const solutionFiles = ['package.json', 'binding.gyp']
 
-var exercise = require('workshopper-exercise')()
+let exercise = require('workshopper-exercise')()
 
 // add solutions file listing from solutions/ directory
 exercise = solutions(exercise, solutionFiles)
@@ -31,7 +31,7 @@ exercise.addProcessor(gyp.checkBinding)
 // complete the copied boilerplate dir by adding node_modules/bindings/
 // so they don't need to `npm install bindings`
 function boilerplateSetup (callback) {
-  var target = path.join(process.cwd(), exercise.boilerplateOut[boilerplateName])
+  const target = path.join(process.cwd(), exercise.boilerplateOut[boilerplateName])
   copy.copyDeps(target, callback)
 }
 

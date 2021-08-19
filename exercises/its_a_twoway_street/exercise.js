@@ -13,7 +13,7 @@ const copyTempDir = path.join(process.cwd(), '~test-addon.' + Math.floor(Math.ra
 // a place to make a full copy to replace myaddon.cc with a mock to do a mocked run to test JS
 const copyFauxTempDir = path.join(process.cwd(), '~test-addon-faux.' + Math.floor(Math.random() * 10000))
 
-var exercise = require('workshopper-exercise')()
+let exercise = require('workshopper-exercise')()
 
 // add solutions file listing from solutions/ directory
 exercise = solutions(exercise, solutionFiles)
@@ -45,7 +45,7 @@ const expectFn = (arg) => (Buffer.from(arg).length + '\n')
 // so we can test that their JS is doing what it is supposed to be doing and there
 // is no cheating! (e.g. console.log(...))
 function checkJs (mode, callback) {
-  var exercise = this
+  const exercise = this
 
   if (!exercise.passed) { return callback(null, true) } // shortcut if we've already had a failure
 

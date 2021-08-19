@@ -16,7 +16,7 @@ const copyFauxTempDir = path.join(process.cwd(), '~test-addon-faux.' + Math.floo
 // what we should get on stdout for this to pass
 const expected = 'this is a test, I repeat, this is a test'
 
-var exercise = require('workshopper-exercise')()
+let exercise = require('workshopper-exercise')()
 
 // add solutions file listing from solutions/ directory
 exercise = solutions(exercise, solutionFiles)
@@ -46,7 +46,7 @@ function copyFauxAddon (mode, callback) {
 // so we can test that their JS is doing what it is supposed to be doing and there
 // is no cheating! (e.g. console.log(...))
 function checkJs (mode, callback) {
-  var exercise = this
+  const exercise = this
 
   if (!exercise.passed) { return callback(null, true) } // shortcut if we've already had a failure
 
@@ -88,8 +88,8 @@ function checkExec (mode, callback) {
         return callback(err)
       }
 
-      var pass = stdout.toString().replace('\r', '') === expected + '\n'
-      var seminl = !pass && stdout.toString() === expected
+      const pass = stdout.toString().replace('\r', '') === expected + '\n'
+      const seminl = !pass && stdout.toString() === expected
 
       if (!seminl && !pass) {
         process.stderr.write(stderr)
