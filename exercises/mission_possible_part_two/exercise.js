@@ -27,7 +27,7 @@ exercise.addProcessor(checkJs)
 exercise.addCleanup(copy.cleanup([copyFauxTempDir]))
 
 function copyFauxAddon (mode, callback) {
-  copy(path.join(__dirname, 'faux', 'myaddon.cc'), copyFauxTempDir, { overwrite: true }, function (err) {
+  copy(path.join(__dirname, 'faux', 'myaddon.cc'), path.join(copyFauxTempDir, "myaddon.cc"), { overwrite: true }, function (err) {
     if (err) { return callback(err) }
 
     callback(null, true)
@@ -50,7 +50,7 @@ function checkJs (mode, callback) {
 
     execWith(
       require.resolve('../../lib/require-argv2'),
-      copyFauxTempDir,
+      path.join(copyFauxTempDir, "build", "Release", "myaddon"),
       'FAUX\n',
       function (err, pass) {
         if (err) {
